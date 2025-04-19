@@ -1,12 +1,12 @@
 # Angular Resume Application
 
-A professional resume web application built with Angular, featuring dual download options for both styled and ATS-optimized resume formats.
+A professional resume web application built with Angular, featuring download options for ATS-optimized resume formats.
 
 ## Overview
 
-This Angular application provides an interactive online resume with a modern, responsive design. It offers two download options:
+This Angular application provides an interactive online resume with a modern, responsive design.
 
-1. **ATS-Friendly Resume** - A clean, optimized PDF designed to pass through Applicant Tracking Systems
+**ATS-Friendly Resume** - A clean, optimized PDF designed to pass through Applicant Tracking Systems
 
 ## Features
 
