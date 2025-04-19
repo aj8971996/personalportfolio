@@ -13,7 +13,6 @@ This Angular application provides an interactive online resume with a modern, re
 - Interactive web-based resume with responsive design
 - Professional styling with Tailwind CSS
 - Experience, skills, education, and project sections
-- PDF generation using html2canvas and jsPDF
 - ATS-optimized resume format for job applications
 - Loading indicator for user feedback during PDF generation
 
@@ -44,8 +43,8 @@ Key components include:
 
 1. Clone the repository
    ```bash
-   git clone [repository-url]
-   cd angular-resume
+   git clone [url-here]
+   cd personalportfolio
    ```
 
 2. Install dependencies
