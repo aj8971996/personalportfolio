@@ -1,6 +1,6 @@
 # Angular Resume Application
 
-A professional resume web application built with Angular, featuring dual download options for both styled and ATS-optimized resume formats.
+A professional resume web application built with Angular, featuring download options for ATS-optimized resume formats.
 
 ## Overview
 
