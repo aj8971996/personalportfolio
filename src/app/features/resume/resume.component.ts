@@ -1,7 +1,7 @@
 // resume.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResumeDownloadService } from '../../services/resume-download.service';
+import { ResumeDownloadService } from '../../core/services/resume-download.service';
 
 @Component({
   selector: 'app-resume',
