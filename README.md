@@ -1,59 +1,112 @@
-# Personalportfolio
+# Angular Resume Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.3.
+A professional resume web application built with Angular, featuring dual download options for both styled and ATS-optimized resume formats.
 
-## Development server
+## Overview
 
-To start a local development server, run:
+This Angular application provides an interactive online resume with a modern, responsive design. It offers two download options:
 
-```bash
-ng serve
-```
+1. **ATS-Friendly Resume** - A clean, optimized PDF designed to pass through Applicant Tracking Systems
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Features
 
-## Code scaffolding
+- Interactive web-based resume with responsive design
+- Professional styling with Tailwind CSS
+- Experience, skills, education, and project sections
+- PDF generation using html2canvas and jsPDF
+- ATS-optimized resume format for job applications
+- Loading indicator for user feedback during PDF generation
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Project Structure
 
-```bash
-ng generate component component-name
-```
+Key components include:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- `resume.component.ts` - Main resume component with download functionality
+- `resume.component.html` - Resume template with content sections
+- `resume-download.service.ts` - Service for PDF generation and download options
 
-```bash
-ng generate --help
-```
+## Technologies Used
 
-## Building
+- Angular
+- TypeScript
+- Tailwind CSS
+- html2canvas
+- jsPDF
 
-To build the project run:
+## Getting Started
 
-```bash
-ng build
-```
+### Prerequisites
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Node.js and npm installed
+- Angular CLI installed
 
-## Running unit tests
+### Installation
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+1. Clone the repository
+   ```bash
+   git clone [repository-url]
+   cd angular-resume
+   ```
 
-```bash
-ng test
-```
+2. Install dependencies
+   ```bash
+   npm install
+   ```
 
-## Running end-to-end tests
+3. Start the development server
+   ```bash
+   ng serve
+   ```
 
-For end-to-end (e2e) testing, run:
+4. Navigate to `http://localhost:4200/` in your browser
 
-```bash
-ng e2e
-```
+## How It Works
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Resume Display
 
-## Additional Resources
+The application uses Angular components to render a professional resume with sections for:
+- Professional summary
+- Work experience
+- Technical skills
+- Education and certifications
+- Project showcases
+- Contact information
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### PDF Generation
+
+The application offers two PDF download options:
+
+#### ATS-Friendly Resume PDF
+- Generates a simplified resume with optimal formatting for ATS systems
+- Uses clean typography, clear section headers, and keyword-friendly structure
+- Ensures resume content will pass through automated filters during job applications
+
+## Customization
+
+### Content Customization
+
+To update your resume content:
+1. Edit the `resume.component.html` file to update your information
+2. Update the ATS template HTML in the `getATSFriendlyResumeHTML()` method in `resume-download.service.ts`
+
+### Styling Customization
+
+- Style changes for the web view can be made in the Tailwind classes in `resume.component.html`
+- ATS resume styling can be modified in the inline CSS within the `getATSFriendlyResumeHTML()` method
+
+## Browser Compatibility
+
+The application has been tested and works in:
+- Chrome
+- Firefox
+- Edge
+- Safari
+
+## Author
+
+Alexander Barkus
+
+## Acknowledgments
+
+- Tailwind CSS for the UI framework
+- html2canvas and jsPDF for PDF generation capabilities
