@@ -13,6 +13,11 @@ export const routes: Routes = [
     title: 'Resume'
   },
   {
+    path: 'services',
+    loadComponent: () => import('./features/my-services/my-services.component').then(m =>m.MyServicesComponent),
+    title: 'My Services'
+  },
+  {
     path: '**',
     redirectTo: ''
   }
