@@ -37,7 +37,8 @@ export class ResumeComponent {
   }
   
   /**
-   * Handles downloading the ATS-friendly resume
+   * Handles downloading the ATS-friendly resume as a clean PDF
+   * Uses intelligent page breaks to prevent content from splitting awkwardly
    */
   downloadATSResume(): void {
     // Show a loading indicator
@@ -45,10 +46,32 @@ export class ResumeComponent {
     
     setTimeout(async () => {
       try {
-        // Download the ATS-friendly resume
-        await this.resumeDownloadService.downloadResume('', 'ats');
+        // Download the ATS-friendly resume as PDF with smart page breaks
+        await this.resumeDownloadService.downloadResume('', 'ats-pdf');
       } catch (error) {
         console.error('Failed to download ATS resume:', error);
+        alert('There was an error generating your ATS resume. Please try again.');
+      } finally {
+        // Hide loading indicator
+        this.showLoading(false);
+      }
+    }, 100);
+  }
+
+  /**
+   * Handles downloading the ATS-friendly resume as HTML
+   * Useful if user wants to make manual edits before printing
+   */
+  downloadATSResumeHTML(): void {
+    // Show a loading indicator
+    this.showLoading(true);
+    
+    setTimeout(async () => {
+      try {
+        // Download the ATS-friendly resume as HTML
+        await this.resumeDownloadService.downloadResume('', 'ats');
+      } catch (error) {
+        console.error('Failed to download ATS resume HTML:', error);
         alert('There was an error generating your ATS resume. Please try again.');
       } finally {
         // Hide loading indicator
