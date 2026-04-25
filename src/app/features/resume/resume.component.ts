@@ -47,7 +47,7 @@ export class ResumeComponent {
     setTimeout(async () => {
       try {
         // Download the ATS-friendly resume as PDF with smart page breaks
-        await this.resumeDownloadService.downloadResume('', 'ats-pdf');
+        await this.resumeDownloadService.downloadResume('', 'ats');
       } catch (error) {
         console.error('Failed to download ATS resume:', error);
         alert('There was an error generating your ATS resume. Please try again.');
