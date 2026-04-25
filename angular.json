@@ -41,7 +41,7 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/personalportfolio/",
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
@@ -104,7 +104,12 @@
           }
         },
         "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "/",
+            "branch": "gh-pages",
+            "cname": "alexbarkus.dev"
+          }
         }
       }
     }
