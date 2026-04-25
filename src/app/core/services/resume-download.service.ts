@@ -260,7 +260,7 @@ export class ResumeDownloadService {
             <div class="experience-item">
                 <div class="job-title">Forward Deployed Engineer (Contract)</div>
                 <div><span class="company">The Sphere</span> &ndash; Las Vegas, NV</div>
-                <div class="date">October 2024 &ndash; Present</div>
+                <div class="date">October 2025 &ndash; Present &nbsp;&middot;&nbsp; Contract Oct 2025 &rarr; FTE Jan 2026</div>
                 <ul class="responsibilities">
                     <li>Sole developer on a four-repo platform: Angular 19 frontend (swiki), FastAPI/SQL Server backend (swiki-api), Python ETL pipelines (etls), and centralized CI infrastructure (testing-suite)</li>
                     <li>Architected a role-gated SPA with five stakeholder portals and two-pass Microsoft Entra ID / Azure AD authentication with backend JWT revalidation</li>
@@ -287,7 +287,7 @@ export class ResumeDownloadService {
             </div>
 
             <div class="experience-item">
-                <div class="job-title">Customer Experience Team Lead</div>
+                <div class="job-title">Customer Experience &amp; Shopper Care Team Lead</div>
                 <div><span class="company">Instacart</span> &ndash; Remote</div>
                 <div class="date">February 2021 &ndash; June 2023</div>
                 <ul class="responsibilities">
@@ -301,8 +301,8 @@ export class ResumeDownloadService {
             </div>
 
             <div class="experience-item">
-                <div class="job-title">Specialized Customer Support (Contract)</div>
-                <div><span class="company">Next Level Business Services, Inc.</span> &ndash; Remote</div>
+                <div class="job-title">Customer &amp; Shopper Support Specialist (Contract)</div>
+                <div><span class="company">Instacart</span> &ndash; Remote</div>
                 <div class="date">July 2020 &ndash; February 2021</div>
                 <ul class="responsibilities">
                     <li>Resolved 150+ support tickets weekly across varying priority levels</li>

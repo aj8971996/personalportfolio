@@ -28,8 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       title: 'Forward Deployed Engineer',
       company: 'Sphere Entertainment Co.',
-      period: 'Oct 2024 – Present',
-      tag: 'Contract · Current',
+      period: 'Oct 2025 – Present',
+      tag: 'Contract → FTE · Current',
       current: true,
       bullets: [
         'Built a 4-repo production platform: Angular 19 SPA, FastAPI/SQL Server backend, Python ETL suite, Playwright QA repo',
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       title: 'Data Visualization Analyst II',
       company: 'Clark County School District',
-      period: 'Nov 2023 – Sep 2024',
+      period: 'Nov 2023 – Sep 2025',
       tag: '',
       current: false,
       bullets: [
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       ]
     },
     {
-      title: 'Customer Experience Team Lead',
+      title: 'Customer Experience & Shopper Care Team Lead',
       company: 'Instacart',
       period: 'Feb 2021 – Jun 2023',
       tag: '',
@@ -63,8 +63,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       ]
     },
     {
-      title: 'Specialized Customer Support',
-      company: 'Next Level Business Services',
+      title: 'Customer & Shopper Support Specialist',
+      company: 'Instacart',
       period: 'Jul 2020 – Feb 2021',
       tag: 'Contract',
       current: false,
