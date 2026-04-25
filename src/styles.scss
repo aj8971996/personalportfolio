@@ -2,4 +2,222 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Your custom styles below this line */
+/* ─── Design Tokens ──────────────────────────────────────── */
+:root {
+  --bg-base:     #09090B;
+  --bg-surface:  #111117;
+  --bg-raised:   #18181F;
+
+  --border:          rgba(255, 255, 255, 0.06);
+  --border-hover:    rgba(99, 102, 241, 0.45);
+  --border-amber:    rgba(245, 158, 11, 0.35);
+
+  --accent-primary: #6366F1;
+  --accent-bright:  #818CF8;
+  --accent-dim:     #4F46E5;
+  --accent-amber:   #F59E0B;
+  --accent-cyan:    #06B6D4;
+
+  --text-primary:   #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted:     #475569;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+/* ─── Base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+a { text-decoration: none; }
+
+/* ─── Dot Grid ───────────────────────────────────────────── */
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(99, 102, 241, 0.18) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, black 30%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ─── Glass Card ─────────────────────────────────────────── */
+.glass-card {
+  background: rgba(17, 17, 23, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 0 28px rgba(99, 102, 241, 0.09);
+  }
+}
+
+.glass-card-amber {
+  background: rgba(17, 17, 23, 0.6);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-amber);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    border-color: rgba(245, 158, 11, 0.45);
+    border-left-color: var(--accent-amber);
+    box-shadow: 0 0 28px rgba(245, 158, 11, 0.07);
+  }
+}
+
+/* ─── Gradient Text ──────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--text-primary) 20%, var(--accent-bright) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: var(--accent-dim);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background: var(--accent-primary);
+    box-shadow: 0 0 22px rgba(99, 102, 241, 0.3);
+  }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+/* ─── Section Primitives ─────────────────────────────────── */
+.section {
+  padding: 5.5rem 0;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 0.6rem;
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 3.5vw, 2.625rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.875rem;
+}
+
+.section-sub {
+  font-size: 1.0625rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 580px;
+}
+
+/* ─── Tech Badge ─────────────────────────────────────────── */
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    color: var(--accent-bright);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+}
+
+/* ─── Scroll Reveal ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; }
+::-webkit-scrollbar-track  { background: var(--bg-base); }
+::-webkit-scrollbar-thumb  { background: rgba(99, 102, 241, 0.3); border-radius: 3px; }

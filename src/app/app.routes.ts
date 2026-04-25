@@ -5,17 +5,22 @@ export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'Home'
+    title: 'Alex Barkus — Forward Deployed Engineer'
+  },
+  {
+    path: 'approach',
+    loadComponent: () => import('./features/approach/approach.component').then(m => m.ApproachComponent),
+    title: 'Approach — Alex Barkus'
   },
   {
     path: 'resume',
     loadComponent: () => import('./features/resume/resume.component').then(m => m.ResumeComponent),
-    title: 'Resume'
+    title: 'Resume — Alex Barkus'
   },
   {
     path: 'services',
-    loadComponent: () => import('./features/my-services/my-services.component').then(m =>m.MyServicesComponent),
-    title: 'My Services'
+    redirectTo: 'approach',
+    pathMatch: 'full'
   },
   {
     path: '**',
