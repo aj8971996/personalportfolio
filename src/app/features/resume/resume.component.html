@@ -12,7 +12,7 @@
     <div class="max-w-4xl mx-auto mb-16 bg-gray-800 bg-opacity-70 rounded-xl p-8 border border-gray-700 shadow-xl">
       <h2 class="text-2xl font-bold mb-6 text-blue-400">Professional Summary</h2>
       <p class="text-gray-300">
-        I design and build systems end to end — schema, API, frontend, deployment — and stay close to the people using them. Three productions as sole developer: a four-repo internal platform at Sphere Entertainment, a ground-up data infrastructure system at one of the largest school districts in the US, and ScopeOrNope — an indie SaaS I designed, built, and shipped to production in 2026. The through line is the same in all three: understand the actual problem, build directly at it, ship something that gets adopted.
+        I design and build systems end to end (schema, API, frontend, deployment) and stay close to the people using them. Three productions as sole developer: a four-repo internal platform at Sphere Entertainment, a ground-up data infrastructure system at one of the largest school districts in the US, and ScopeOrNope, an indie SaaS I designed, built, and shipped to production in 2026. The through line is the same in all three: understand the actual problem, build directly at it, ship something that gets adopted.
       </p>
     </div>
 
@@ -36,7 +36,7 @@
           <li>Replaced a legacy monolith ETL script with a modular framework, automating workforce report generation and data pipeline orchestration</li>
           <li>Three-dashboard Prometheus + Grafana observability stack monitors API and ETL health in real time</li>
           <li>Playwright E2E coverage spans all five portals; SAST runs in GitHub Actions on a Page Object Model architecture</li>
-          <li>Presented to 6–7 senior executives across Event Security, Building Operations, and Guest Services — received buy-in from all three departments</li>
+          <li>Presented to 6–7 senior executives across Event Security, Building Operations, and Guest Services. Buy-in from all 3 departments.</li>
           <li>Company president identified the platform as a candidate revenue product for future Sphere venues</li>
           <li>Dockerized deployment via docker-compose; nginx handles reverse proxy and HTTPS enforcement</li>
         </ul>
@@ -278,11 +278,11 @@
         </div>
         <p class="text-gray-400 text-sm mb-3">Founder &amp; Sole Engineer · 2026 · Next.js / TypeScript / Supabase / Anthropic API</p>
         <p class="text-gray-300 mb-4">
-          A SaaS tool for freelance creatives that classifies client change requests as in-scope, out-of-scope, or unclear — then generates a professional, tone-matched response in seconds. Designed, architected, and shipped to production solo.
+          A SaaS tool for freelance creatives that classifies client change requests as in-scope, out-of-scope, or unclear, then generates a professional, tone-matched response in seconds. Designed, architected, and shipped to production solo.
         </p>
         <ul class="list-disc list-inside text-gray-300 space-y-2 pl-1 mb-4">
           <li>Hybrid classifier: rule-based engine (fully offline) escalates to claude-haiku-4-5 with prompt caching for ambiguous requests; graceful degradation if API is unavailable</li>
-          <li>Full SaaS billing: Stripe webhook is the sole writer of subscription_tier, enforced at the Supabase RLS level — feature gates verified server-side, never trusting client input</li>
+          <li>Full SaaS billing: Stripe webhook is the sole writer of subscription_tier, enforced at the Supabase RLS level. Feature gates are verified server-side; client input is never trusted.</li>
           <li>Security-first schema: RLS on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) in a transaction</li>
           <li>Privacy-first analytics: PostHog property allowlist blocks any key matching /scope/, /client/, or /content/ before it reaches third-party telemetry</li>
         </ul>

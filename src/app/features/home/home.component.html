@@ -13,8 +13,8 @@
     </h1>
 
     <p class="hero-statement animate-fade-up" style="animation-delay: 0.28s">
-      I sit at the intersection of engineering and the customer —
-      close enough to understand the real problem,
+      I sit at the intersection of engineering and the customer.
+      Close enough to understand the real problem,
       technical enough to build the right solution.
     </p>
 
@@ -38,8 +38,7 @@
       <span class="section-label">The Role</span>
       <h2 class="section-heading">What Forward Deployed Means</h2>
       <p class="section-sub">
-        Most engineers optimize for code. FDEs optimize for outcomes —
-        which requires speaking both languages fluently.
+        FDEs optimize for outcomes. That takes fluency in the code and the org that runs it.
       </p>
     </div>
 
@@ -53,9 +52,8 @@
         </div>
         <h3 class="pillar-title">Technical Depth</h3>
         <p class="pillar-body">
-          Production-grade systems built in-house. Full-stack apps, ETL pipelines,
-          enterprise auth infrastructure, real observability —
-          not prototypes. Platforms.
+          Production-grade systems built in-house: full-stack apps, ETL pipelines,
+          enterprise auth infrastructure, real observability.
         </p>
       </div>
 
@@ -68,9 +66,8 @@
         </div>
         <h3 class="pillar-title">Customer Proximity</h3>
         <p class="pillar-body">
-          Embedded alongside stakeholders. Understanding their workflow,
-          their constraints, their org chart —
-          before writing a single line of code.
+          Embedded alongside stakeholders. Their workflow, their constraints,
+          their org chart, their unwritten rules, all mapped before writing a line of code.
         </p>
       </div>
 
@@ -84,7 +81,7 @@
         <p class="pillar-body">
           Measured by what changed in the business: months → days,
           manual → automated, fragile → observable.
-          Not what shipped — what stuck.
+          The measure is what's still running six months later.
         </p>
       </div>
 
@@ -125,7 +122,7 @@
       <span class="section-label">Featured Work</span>
       <h2 class="section-heading">Case Studies</h2>
       <p class="section-sub">
-        Three builds — all designed, architected, and shipped solo: ScopeOrNope,
+        Three builds, all designed, architected, and shipped solo: ScopeOrNope,
         an indie SaaS taken from zero to production; a multi-department operations
         platform at Sphere Entertainment; and data infrastructure for one of the
         five largest school districts in the US.
@@ -151,8 +148,8 @@
         <div class="case-body-inner">
           <p class="case-context">
             A SaaS tool for freelance creatives that classifies client change requests as in-scope,
-            out-of-scope, or unclear — then generates a professional, tone-matched response in seconds.
-            Scoped deliberately: not a CRM or project manager, just a focused answer to scope creep.
+            out-of-scope, or unclear, then generates a professional, tone-matched response in seconds.
+            One focused tool for scope creep.
           </p>
 
           <div class="screenshot-showcase">
@@ -190,9 +187,9 @@
           </div>
 
           <ul class="case-bullets">
-            <li>Hybrid classification engine: a rule-based classifier (token matching + substitution-phrase detection, fully offline) escalates to claude-haiku-4-5 with prompt caching only on ambiguous requests or Pro-tier users — graceful degradation to offline if the API is unavailable</li>
+            <li>Hybrid classification engine: a rule-based classifier (token matching + substitution-phrase detection, fully offline) escalates to claude-haiku-4-5 with prompt caching only on ambiguous requests or Pro-tier users; graceful degradation to offline if the API is unavailable</li>
             <li>AI response refinement detects secondary risk signals (revision_risky, timeline_impacting, fee_impacting) surfaced as inline warnings alongside the tone-matched draft; a separate scope gap detector flags vague boundaries in the project scope document</li>
-            <li>Full SaaS billing pattern: Stripe webhook handler is the sole writer of subscription_tier (enforced at the RLS level); feature gates are verified in server actions against the Supabase user object — never trusting client input</li>
+            <li>Full SaaS billing pattern: Stripe webhook handler is the sole writer of subscription_tier (enforced at the RLS level); feature gates are verified in server actions against the Supabase user object. Client input is never trusted.</li>
             <li>Security-first database design: Row-Level Security on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) backed by a transaction</li>
             <li>Privacy-first analytics: PostHog with an explicit property allowlist that blocks any key matching /scope/, /client/, or /content/ patterns and auto-redacts long strings before they reach third-party telemetry</li>
           </ul>
@@ -275,12 +272,12 @@
         <div class="case-body-inner">
           <p class="case-context">
             Sole engineer on a ground-up internal platform at one of the largest school districts in the
-            United States. Clark County's data lived across Oracle, Workforce, Google Sheets, and Excel —
-            systems that don't speak to each other natively.
+            United States. Clark County's data lived across Oracle, Workforce, Google Sheets, and Excel.
+            None of those systems talk to each other.
           </p>
 
           <ul class="case-bullets">
-            <li>Designed the database schema, built the FastAPI backend, developed the Angular frontend, and managed Docker deployment to a VM — full ownership, end to end</li>
+            <li>Designed the database schema, built the FastAPI backend, developed the Angular frontend, and managed Docker deployment to a VM. Full ownership, end to end.</li>
             <li>Built geographic data visualizations mapping staff tenure across Clark County using SQL Server spatial queries and Highcharts</li>
             <li>Reduced data request fulfillment from months to days via custom ETL pipelines and a unified data layer</li>
             <li>Integrated Highcharts for dynamic leadership tracking dashboards with role-based access and PDF report generation</li>
