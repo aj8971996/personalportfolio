@@ -92,6 +92,21 @@
   }
 }
 
+.nav-art {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent-amber);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    color: #fbbf24;
+  }
+}
+
 /* ── Mobile toggle ── */
 .mobile-toggle {
   display: flex;
@@ -145,4 +160,10 @@
 .mobile-resume {
   color: var(--accent-bright);
   &:hover { color: var(--accent-primary); }
+}
+
+.mobile-art {
+  color: var(--accent-amber);
+  opacity: 0.8;
+  &:hover { opacity: 1; color: #fbbf24; }
 }

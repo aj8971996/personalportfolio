@@ -30,10 +30,13 @@
 /* ─── Base ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-base); /* fallback when canvas absent (other pages) */
+}
 
 body {
-  background-color: var(--bg-base);
+  background-color: transparent; /* canvas provides bg on home; html fallback elsewhere */
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 16px;

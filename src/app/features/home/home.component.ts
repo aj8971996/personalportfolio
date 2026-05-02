@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     else this.bgTick();
   };
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef, private ngZone: NgZone) {}
 
   ngOnInit(): void {
     setTimeout(() => this.startTypewriter(), 900);
@@ -142,7 +142,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.bgResize();
     window.addEventListener('resize', this.bgResizeRef);
     document.addEventListener('visibilitychange', this.bgVisibilityRef);
-    this.bgTick();
+    this.ngZone.runOutsideAngular(() => this.bgTick());
   }
 
   private bgResize(): void {
