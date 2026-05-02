@@ -125,148 +125,173 @@
       <span class="section-label">Featured Work</span>
       <h2 class="section-heading">Case Studies</h2>
       <p class="section-sub">
-        Three builds — all designed, architected, and shipped solo: a multi-department operations
-        platform at Sphere Entertainment, data infrastructure for one of the five largest school
-        districts in the US, and ScopeOrNope, an indie SaaS taken from zero to production.
+        Three builds — all designed, architected, and shipped solo: ScopeOrNope,
+        an indie SaaS taken from zero to production; a multi-department operations
+        platform at Sphere Entertainment; and data infrastructure for one of the
+        five largest school districts in the US.
       </p>
     </div>
 
+    <!-- Case Study 0: ScopeOrNope (default expanded) -->
+    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 0">
+      <button class="case-trigger" (click)="toggleCase(0)" [attr.aria-expanded]="expandedCase === 0">
+        <div class="case-trigger-left">
+          <div class="case-company">Personal Project · Indie SaaS</div>
+          <h3 class="case-title">ScopeOrNope</h3>
+          <div class="case-meta">Founder &amp; Sole Engineer · 2026 · Full-Stack TypeScript</div>
+        </div>
+        <div class="case-trigger-right">
+          <div class="case-outcome-badge">Zero → production</div>
+          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </button>
+      <div class="case-body" [class.case-body-open]="expandedCase === 0">
+        <div class="case-body-inner">
+          <p class="case-context">
+            A SaaS tool for freelance creatives that classifies client change requests as in-scope,
+            out-of-scope, or unclear — then generates a professional, tone-matched response in seconds.
+            Scoped deliberately: not a CRM or project manager, just a focused answer to scope creep.
+          </p>
+
+          <div class="screenshot-showcase">
+            <div class="shot-tabs">
+              @for (shot of shots; track shot.label; let i = $index) {
+                <button class="shot-tab" [class.shot-tab-active]="activeShot === i" (click)="activeShot = i">
+                  {{ shot.label }}
+                </button>
+              }
+            </div>
+            <div class="shot-browser">
+              <div class="shot-chrome">
+                <div class="shot-dots">
+                  <span class="dot-close"></span>
+                  <span class="dot-min"></span>
+                  <span class="dot-max"></span>
+                </div>
+                <div class="shot-url">{{ shots[activeShot].url }}</div>
+              </div>
+              <div class="shot-frame">
+                @for (shot of shots; track shot.label; let i = $index) {
+                  <img [src]="shot.src" [alt]="shot.alt" class="shot-img" [class.shot-img-active]="activeShot === i" />
+                }
+              </div>
+            </div>
+            <div class="shot-live-cta">
+              <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="btn-live">
+                Visit ScopeOrNope
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <ul class="case-bullets">
+            <li>Hybrid classification engine: a rule-based classifier (token matching + substitution-phrase detection, fully offline) escalates to claude-haiku-4-5 with prompt caching only on ambiguous requests or Pro-tier users — graceful degradation to offline if the API is unavailable</li>
+            <li>AI response refinement detects secondary risk signals (revision_risky, timeline_impacting, fee_impacting) surfaced as inline warnings alongside the tone-matched draft; a separate scope gap detector flags vague boundaries in the project scope document</li>
+            <li>Full SaaS billing pattern: Stripe webhook handler is the sole writer of subscription_tier (enforced at the RLS level); feature gates are verified in server actions against the Supabase user object — never trusting client input</li>
+            <li>Security-first database design: Row-Level Security on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) backed by a transaction</li>
+            <li>Privacy-first analytics: PostHog with an explicit property allowlist that blocks any key matching /scope/, /client/, or /content/ patterns and auto-redacts long strings before they reach third-party telemetry</li>
+          </ul>
+
+          <div class="case-stack">
+            @for (t of ['Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Supabase', 'Drizzle ORM', 'Anthropic API', 'Stripe', 'PostHog', 'Vercel']; track t) {
+              <span class="tech-badge">{{ t }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Case Study 1: Sphere -->
-    <div class="case-study glass-card-amber reveal">
-      <div class="case-study-header">
-        <div>
+    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 1">
+      <button class="case-trigger" (click)="toggleCase(1)" [attr.aria-expanded]="expandedCase === 1">
+        <div class="case-trigger-left">
           <div class="case-company">Sphere Entertainment Co. — Las Vegas, NV</div>
           <h3 class="case-title">Internal Operations Platform</h3>
           <div class="case-meta">Forward Deployed Engineer · Oct 2025 – Present · Contract → FTE</div>
         </div>
-        <div class="case-outcome-badge">Executive buy-in secured</div>
-      </div>
-
-      <p class="case-context">
-        Sole embedded engineer at a venue where the operations stack had outgrown the tools
-        managing it. Scope expanded from a legacy data audit to a full multi-department
-        internal platform.
-      </p>
-
-      <div class="case-repos">
-        <span class="section-label" style="margin-bottom: 0.5rem">Architecture — 4 repositories</span>
-        <div class="repo-tags">
-          <span class="repo-tag">swiki</span>
-          <span class="repo-tag">swiki-api</span>
-          <span class="repo-tag">etls</span>
-          <span class="repo-tag">testing-suite</span>
+        <div class="case-trigger-right">
+          <div class="case-outcome-badge">Executive buy-in secured</div>
+          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
         </div>
-      </div>
+      </button>
+      <div class="case-body" [class.case-body-open]="expandedCase === 1">
+        <div class="case-body-inner">
+          <p class="case-context">
+            Sole embedded engineer at a venue where the operations stack had outgrown the tools
+            managing it. Scope expanded from a legacy data audit to a full multi-department
+            internal platform.
+          </p>
 
-      <ul class="case-bullets">
-        <li>Angular 19 SPA with five role-gated stakeholder portals (Exec, Security, HSE, Guest Services, Dev) using Microsoft Entra ID / Azure AD with MSAL and backend JWT revalidation on every request</li>
-        <li>FastAPI backend on SQL Server with HTTPS enforcement, full ticketing system, ETL health monitoring endpoints, and Docker/docker-compose deployment</li>
-        <li>Python ETL suite extracting, cleansing, and loading operational workforce data from scrapers to SQL Server on automated schedules</li>
-        <li>Centralized QA repo with Playwright E2E coverage across all portals, SAST in GitHub Actions, and Page Object Model architecture</li>
-        <li>Prometheus + Grafana observability stack (3 dashboards) for real-time API and ETL monitoring; nginx reverse proxy with DNS alias and HTTPS</li>
-      </ul>
+          <div class="case-repos">
+            <span class="section-label" style="margin-bottom: 0.5rem">Architecture — 4 repositories</span>
+            <div class="repo-tags">
+              <span class="repo-tag">swiki</span>
+              <span class="repo-tag">swiki-api</span>
+              <span class="repo-tag">etls</span>
+              <span class="repo-tag">testing-suite</span>
+            </div>
+          </div>
 
-      <div class="case-stack">
-        @for (t of ['Angular 19', 'FastAPI', 'SQL Server', 'Python', 'Azure AD / MSAL', 'Docker', 'nginx', 'Playwright', 'Prometheus', 'Grafana', 'GitHub Actions']; track t) {
-          <span class="tech-badge">{{ t }}</span>
-        }
+          <ul class="case-bullets">
+            <li>Angular 19 SPA with five role-gated stakeholder portals (Exec, Security, HSE, Guest Services, Dev) using Microsoft Entra ID / Azure AD with MSAL and backend JWT revalidation on every request</li>
+            <li>FastAPI backend on SQL Server with HTTPS enforcement, full ticketing system, ETL health monitoring endpoints, and Docker/docker-compose deployment</li>
+            <li>Python ETL suite extracting, cleansing, and loading operational workforce data from scrapers to SQL Server on automated schedules</li>
+            <li>Centralized QA repo with Playwright E2E coverage across all portals, SAST in GitHub Actions, and Page Object Model architecture</li>
+            <li>Prometheus + Grafana observability stack (3 dashboards) for real-time API and ETL monitoring; nginx reverse proxy with DNS alias and HTTPS</li>
+          </ul>
+
+          <div class="case-stack">
+            @for (t of ['Angular 19', 'FastAPI', 'SQL Server', 'Python', 'Azure AD / MSAL', 'Docker', 'nginx', 'Playwright', 'Prometheus', 'Grafana', 'GitHub Actions']; track t) {
+              <span class="tech-badge">{{ t }}</span>
+            }
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Case Study 2: CCSD -->
-    <div class="case-study glass-card-amber reveal">
-      <div class="case-study-header">
-        <div>
+    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 2">
+      <button class="case-trigger" (click)="toggleCase(2)" [attr.aria-expanded]="expandedCase === 2">
+        <div class="case-trigger-left">
           <div class="case-company">Clark County School District — Las Vegas, NV</div>
-          <h3 class="case-title">Internal Web Platform & Data Infrastructure</h3>
+          <h3 class="case-title">Internal Web Platform &amp; Data Infrastructure</h3>
           <div class="case-meta">Data Visualization Analyst II · Nov 2023 – Sep 2025</div>
         </div>
-        <div class="case-outcome-badge">Months → days</div>
-      </div>
-
-      <p class="case-context">
-        Sole engineer on a ground-up internal platform at one of the largest school districts in the
-        United States. Clark County's data lived across Oracle, Workforce, Google Sheets, and Excel —
-        systems that don't speak to each other natively.
-      </p>
-
-      <ul class="case-bullets">
-        <li>Designed the database schema, built the FastAPI backend, developed the Angular frontend, and managed Docker deployment to a VM — full ownership, end to end</li>
-        <li>Built geographic data visualizations mapping staff tenure across Clark County using SQL Server spatial queries and Highcharts</li>
-        <li>Reduced data request fulfillment from months to days via custom ETL pipelines and a unified data layer</li>
-        <li>Integrated Highcharts for dynamic leadership tracking dashboards with role-based access and PDF report generation</li>
-      </ul>
-
-      <div class="case-stack">
-        @for (t of ['Angular', 'FastAPI', 'SQL Server', 'Python', 'Highcharts', 'Docker', 'Tableau', 'ETL Pipelines']; track t) {
-          <span class="tech-badge">{{ t }}</span>
-        }
-      </div>
-    </div>
-
-    <!-- Case Study 3: ScopeOrNope -->
-    <div class="case-study glass-card-amber reveal">
-      <div class="case-study-header">
-        <div>
-          <div class="case-company">Personal Project · Indie SaaS</div>
-          <h3 class="case-title">ScopeOrNope</h3>
-          <div class="case-meta">Founder & Sole Engineer · 2026 · Full-Stack TypeScript</div>
+        <div class="case-trigger-right">
+          <div class="case-outcome-badge">Months → days</div>
+          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
         </div>
-        <div class="case-outcome-badge">Zero → production</div>
-      </div>
+      </button>
+      <div class="case-body" [class.case-body-open]="expandedCase === 2">
+        <div class="case-body-inner">
+          <p class="case-context">
+            Sole engineer on a ground-up internal platform at one of the largest school districts in the
+            United States. Clark County's data lived across Oracle, Workforce, Google Sheets, and Excel —
+            systems that don't speak to each other natively.
+          </p>
 
-      <p class="case-context">
-        A SaaS tool for freelance creatives that classifies client change requests as in-scope,
-        out-of-scope, or unclear — then generates a professional, tone-matched response in seconds.
-        Scoped deliberately: not a CRM or project manager, just a focused answer to scope creep.
-      </p>
+          <ul class="case-bullets">
+            <li>Designed the database schema, built the FastAPI backend, developed the Angular frontend, and managed Docker deployment to a VM — full ownership, end to end</li>
+            <li>Built geographic data visualizations mapping staff tenure across Clark County using SQL Server spatial queries and Highcharts</li>
+            <li>Reduced data request fulfillment from months to days via custom ETL pipelines and a unified data layer</li>
+            <li>Integrated Highcharts for dynamic leadership tracking dashboards with role-based access and PDF report generation</li>
+          </ul>
 
-      <div class="screenshot-showcase">
-        <div class="shot-tabs">
-          @for (shot of shots; track shot.label; let i = $index) {
-            <button class="shot-tab" [class.shot-tab-active]="activeShot === i" (click)="activeShot = i">
-              {{ shot.label }}
-            </button>
-          }
-        </div>
-        <div class="shot-browser">
-          <div class="shot-chrome">
-            <div class="shot-dots">
-              <span class="dot-close"></span>
-              <span class="dot-min"></span>
-              <span class="dot-max"></span>
-            </div>
-            <div class="shot-url">{{ shots[activeShot].url }}</div>
-          </div>
-          <div class="shot-frame">
-            @for (shot of shots; track shot.label; let i = $index) {
-              <img [src]="shot.src" [alt]="shot.alt" class="shot-img" [class.shot-img-active]="activeShot === i" />
+          <div class="case-stack">
+            @for (t of ['Angular', 'FastAPI', 'SQL Server', 'Python', 'Highcharts', 'Docker', 'Tableau', 'ETL Pipelines']; track t) {
+              <span class="tech-badge">{{ t }}</span>
             }
           </div>
         </div>
-        <div class="shot-live-cta">
-          <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="btn-live">
-            Visit ScopeOrNope
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <ul class="case-bullets">
-        <li>Hybrid classification engine: a rule-based classifier (token matching + substitution-phrase detection, fully offline) escalates to claude-haiku-4-5 with prompt caching only on ambiguous requests or Pro-tier users — graceful degradation to offline if the API is unavailable</li>
-        <li>AI response refinement detects secondary risk signals (revision_risky, timeline_impacting, fee_impacting) surfaced as inline warnings alongside the tone-matched draft; a separate scope gap detector flags vague boundaries in the project scope document</li>
-        <li>Full SaaS billing pattern: Stripe webhook handler is the sole writer of subscription_tier (enforced at the RLS level); feature gates are verified in server actions against the Supabase user object — never trusting client input</li>
-        <li>Security-first database design: Row-Level Security on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) backed by a transaction</li>
-        <li>Privacy-first analytics: PostHog with an explicit property allowlist that blocks any key matching /scope/, /client/, or /content/ patterns and auto-redacts long strings before they reach third-party telemetry</li>
-      </ul>
-
-      <div class="case-stack">
-        @for (t of ['Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Supabase', 'Drizzle ORM', 'Anthropic API', 'Stripe', 'PostHog', 'Vercel']; track t) {
-          <span class="tech-badge">{{ t }}</span>
-        }
       </div>
     </div>
 

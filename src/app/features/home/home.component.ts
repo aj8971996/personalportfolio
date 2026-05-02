@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly fullTerminalText = '> building at the intersection of systems and stakeholders';
 
   activeShot = 0;
+  expandedCase = 0;
   readonly shots = [
     { label: 'Dashboard', url: 'scopeornope.app/dashboard',    src: 'assets/images/dashboard.png',      alt: 'ScopeOrNope dashboard showing scope risk across active projects' },
     { label: 'Request',   url: 'scopeornope.app/check',        src: 'assets/images/request_input.png',  alt: 'Client change request input and classification form' },
@@ -102,6 +103,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     clearInterval(this.typeInterval);
     this.observer?.disconnect();
+  }
+
+  toggleCase(index: number): void {
+    this.expandedCase = this.expandedCase === index ? -1 : index;
   }
 
   scrollToWork(): void {
