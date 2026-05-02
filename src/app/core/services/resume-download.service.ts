@@ -251,7 +251,7 @@ export class ResumeDownloadService {
 
         <div class="section">
             <h3 class="section-title">PROFESSIONAL SUMMARY</h3>
-            <p>Forward Deployed Engineer with a background spanning full-stack development, data engineering, and customer-facing technical delivery. I design and build systems end to end &mdash; schema, API, frontend, deployment &mdash; and stay close to the people using them. I sit at the intersection of engineering and the customer: close enough to understand the real problem, technical enough to build the right solution.</p>
+            <p>Forward Deployed Engineer with a background spanning full-stack development, data engineering, and customer-facing technical delivery. Three productions as sole developer: a four-repo internal platform at Sphere Entertainment, a ground-up data infrastructure system at one of the largest school districts in the US, and ScopeOrNope &mdash; an indie SaaS designed, built, and shipped to production in 2026. I sit at the intersection of engineering and the customer: close enough to understand the real problem, technical enough to build the right solution.</p>
         </div>
 
         <div class="section">
@@ -323,6 +323,18 @@ export class ResumeDownloadService {
             <h3 class="section-title">PROJECTS</h3>
 
             <div class="project-item">
+                <div class="job-title">ScopeOrNope &mdash; Indie SaaS (scopeornope.com)</div>
+                <div class="date">Founder &amp; Sole Engineer &nbsp;&middot;&nbsp; 2026 &nbsp;&middot;&nbsp; Next.js / TypeScript / Supabase / Anthropic API</div>
+                <p class="description">A SaaS tool for freelance creatives that classifies client change requests as in-scope, out-of-scope, or unclear &mdash; then generates a professional, tone-matched response in seconds. Designed, architected, and shipped to production solo.</p>
+                <ul class="responsibilities">
+                    <li>Hybrid classifier: rule-based engine (fully offline) escalates to claude-haiku-4-5 with prompt caching for ambiguous requests; graceful degradation if the API is unavailable</li>
+                    <li>Full SaaS billing: Stripe webhook is the sole writer of subscription_tier, enforced at the Supabase RLS level &mdash; feature gates verified server-side in server actions, never trusting client input</li>
+                    <li>Security-first schema: RLS on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) backed by a transaction</li>
+                    <li>Privacy-first analytics: PostHog property allowlist blocks any key matching /scope/, /client/, or /content/ before reaching third-party telemetry</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
                 <div class="job-title">Internal Operations Platform &mdash; The Sphere</div>
                 <p class="description">Four-repo internal platform built as sole developer: Angular 19 frontend (swiki), FastAPI/SQL Server backend (swiki-api), Python ETL pipelines (etls), and centralized CI infrastructure (testing-suite). Role-gated SPA with five stakeholder portals, two-pass Entra ID authentication, modular ETL framework, Prometheus/Grafana observability, and Playwright E2E coverage. Deployed via Docker with nginx.</p>
             </div>
@@ -341,6 +353,7 @@ export class ResumeDownloadService {
                         <h4>Frontend &amp; Frameworks</h4>
                         <div class="skill-list">
                             <span class="skill-item">Angular</span>
+                            <span class="skill-item">Next.js 16</span>
                             <span class="skill-item">TypeScript</span>
                             <span class="skill-item">RxJS</span>
                             <span class="skill-item">Tailwind CSS</span>
@@ -356,6 +369,7 @@ export class ResumeDownloadService {
                             <span class="skill-item">JWT</span>
                             <span class="skill-item">RBAC</span>
                             <span class="skill-item">MSAL</span>
+                            <span class="skill-item">Stripe</span>
                             <span class="skill-item">C#</span>
                         </div>
                     </div>
@@ -363,6 +377,8 @@ export class ResumeDownloadService {
                         <h4>Data &amp; Databases</h4>
                         <div class="skill-list">
                             <span class="skill-item">SQL Server</span>
+                            <span class="skill-item">Supabase</span>
+                            <span class="skill-item">Drizzle ORM</span>
                             <span class="skill-item">T-SQL</span>
                             <span class="skill-item">PostgreSQL</span>
                             <span class="skill-item">MySQL</span>
@@ -381,6 +397,7 @@ export class ResumeDownloadService {
                             <span class="skill-item">docker-compose</span>
                             <span class="skill-item">nginx</span>
                             <span class="skill-item">Linux</span>
+                            <span class="skill-item">Vercel</span>
                             <span class="skill-item">VM deployment</span>
                             <span class="skill-item">GitHub Actions</span>
                             <span class="skill-item">CI/CD</span>
@@ -394,6 +411,8 @@ export class ResumeDownloadService {
                             <span class="skill-item">Microsoft Entra ID</span>
                             <span class="skill-item">Prometheus</span>
                             <span class="skill-item">Grafana</span>
+                            <span class="skill-item">PostHog</span>
+                            <span class="skill-item">Sentry</span>
                             <span class="skill-item">Playwright</span>
                         </div>
                     </div>

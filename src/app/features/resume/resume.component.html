@@ -12,7 +12,7 @@
     <div class="max-w-4xl mx-auto mb-16 bg-gray-800 bg-opacity-70 rounded-xl p-8 border border-gray-700 shadow-xl">
       <h2 class="text-2xl font-bold mb-6 text-blue-400">Professional Summary</h2>
       <p class="text-gray-300">
-        I design and build systems end to end — schema, API, frontend, deployment — and stay close to the people using them. Two engagements as sole developer: a four-repo internal platform at Sphere Entertainment and a ground-up data infrastructure system at one of the largest school districts in the US. The through line is the same in both: understand the actual problem, build directly at it, ship something that gets adopted.
+        I design and build systems end to end — schema, API, frontend, deployment — and stay close to the people using them. Three productions as sole developer: a four-repo internal platform at Sphere Entertainment, a ground-up data infrastructure system at one of the largest school districts in the US, and ScopeOrNope — an indie SaaS I designed, built, and shipped to production in 2026. The through line is the same in all three: understand the actual problem, build directly at it, ship something that gets adopted.
       </p>
     </div>
 
@@ -143,6 +143,7 @@
             <h3 class="font-bold mb-2 text-blue-400">Frontend & Frameworks</h3>
             <div class="flex flex-wrap gap-2">
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Angular</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Next.js 16</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">TypeScript</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">RxJS</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Tailwind CSS</span>
@@ -158,6 +159,7 @@
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">JWT</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">RBAC</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">MSAL</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Stripe</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">C#</span>
             </div>
           </div>
@@ -165,6 +167,8 @@
             <h3 class="font-bold mb-2 text-blue-400">Data & Databases</h3>
             <div class="flex flex-wrap gap-2">
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">SQL Server</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Supabase</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Drizzle ORM</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">T-SQL</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">PostgreSQL</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">MySQL</span>
@@ -181,6 +185,7 @@
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">docker-compose</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">nginx</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Linux</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Vercel</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">VM deployment</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">GitHub Actions</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">CI/CD</span>
@@ -194,6 +199,8 @@
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Microsoft Entra ID</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Prometheus</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Grafana</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">PostHog</span>
+              <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Sentry</span>
               <span class="px-3 py-1 rounded-full bg-gray-700 text-gray-300">Playwright</span>
             </div>
           </div>
@@ -262,6 +269,35 @@
     <!-- Projects Section -->
     <div class="max-w-4xl mx-auto mt-16">
       <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
+
+      <!-- ScopeOrNope — full-width featured project -->
+      <div class="bg-gray-800 bg-opacity-50 rounded-xl p-6 border border-blue-800 hover:border-blue-500 transition-all duration-300 mb-8">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-1">
+          <h3 class="text-xl font-bold text-blue-400">ScopeOrNope — Indie SaaS</h3>
+          <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-400 hover:underline">scopeornope.com →</a>
+        </div>
+        <p class="text-gray-400 text-sm mb-3">Founder &amp; Sole Engineer · 2026 · Next.js / TypeScript / Supabase / Anthropic API</p>
+        <p class="text-gray-300 mb-4">
+          A SaaS tool for freelance creatives that classifies client change requests as in-scope, out-of-scope, or unclear — then generates a professional, tone-matched response in seconds. Designed, architected, and shipped to production solo.
+        </p>
+        <ul class="list-disc list-inside text-gray-300 space-y-2 pl-1 mb-4">
+          <li>Hybrid classifier: rule-based engine (fully offline) escalates to claude-haiku-4-5 with prompt caching for ambiguous requests; graceful degradation if API is unavailable</li>
+          <li>Full SaaS billing: Stripe webhook is the sole writer of subscription_tier, enforced at the Supabase RLS level — feature gates verified server-side, never trusting client input</li>
+          <li>Security-first schema: RLS on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) in a transaction</li>
+          <li>Privacy-first analytics: PostHog property allowlist blocks any key matching /scope/, /client/, or /content/ before it reaches third-party telemetry</li>
+        </ul>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Next.js 16</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">TypeScript</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Tailwind CSS v4</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Supabase</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Drizzle ORM</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Anthropic API</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Stripe</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">PostHog</span>
+          <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">Vercel</span>
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Project 1 - Sphere -->
