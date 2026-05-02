@@ -131,19 +131,28 @@
 
     <!-- Case Study 0: ScopeOrNope (default expanded) -->
     <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 0">
-      <button class="case-trigger" (click)="toggleCase(0)" [attr.aria-expanded]="expandedCase === 0">
-        <div class="case-trigger-left">
-          <div class="case-company">Personal Project · Indie SaaS</div>
-          <h3 class="case-title">ScopeOrNope</h3>
-          <div class="case-meta">Founder &amp; Sole Engineer · 2026 · Full-Stack TypeScript</div>
-        </div>
-        <div class="case-trigger-right">
-          <div class="case-outcome-badge">Zero → production</div>
-          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
+      <div class="case-header-row">
+        <button class="case-trigger" (click)="toggleCase(0)" [attr.aria-expanded]="expandedCase === 0">
+          <div class="case-trigger-left">
+            <div class="case-company">Personal Project · Indie SaaS</div>
+            <h3 class="case-title">ScopeOrNope</h3>
+            <div class="case-meta">Founder &amp; Sole Engineer · 2026 · Full-Stack TypeScript</div>
+          </div>
+          <div class="case-trigger-right">
+            <div class="case-outcome-badge">Zero → production</div>
+            <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </button>
+        <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="btn-live btn-live-header">
+          Visit ScopeOrNope
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
           </svg>
-        </div>
-      </button>
+        </a>
+      </div>
       <div class="case-body" [class.case-body-open]="expandedCase === 0">
         <div class="case-body-inner">
           <p class="case-context">
@@ -174,15 +183,6 @@
                   <img [src]="shot.src" [alt]="shot.alt" class="shot-img" [class.shot-img-active]="activeShot === i" />
                 }
               </div>
-            </div>
-            <div class="shot-live-cta">
-              <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="btn-live">
-                Visit ScopeOrNope
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                  <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                </svg>
-              </a>
             </div>
           </div>
 

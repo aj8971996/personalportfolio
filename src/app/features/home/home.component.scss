@@ -178,6 +178,23 @@
   &:last-child { margin-bottom: 0; }
 }
 
+.case-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  .case-trigger {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+}
+
+.btn-live-header {
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .case-trigger {
   display: flex;
   flex-wrap: wrap;
