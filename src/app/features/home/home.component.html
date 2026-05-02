@@ -125,9 +125,9 @@
       <span class="section-label">Featured Work</span>
       <h2 class="section-heading">Case Studies</h2>
       <p class="section-sub">
-        Two greenfield builds: a multi-department platform at Sphere Entertainment,
-        and data infrastructure for one of the five largest school districts in the US.
-        Designed, architected, and shipped solo in both.
+        Three builds — all designed, architected, and shipped solo: a multi-department operations
+        platform at Sphere Entertainment, data infrastructure for one of the five largest school
+        districts in the US, and ScopeOrNope, an indie SaaS taken from zero to production.
       </p>
     </div>
 
@@ -199,6 +199,72 @@
 
       <div class="case-stack">
         @for (t of ['Angular', 'FastAPI', 'SQL Server', 'Python', 'Highcharts', 'Docker', 'Tableau', 'ETL Pipelines']; track t) {
+          <span class="tech-badge">{{ t }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Case Study 3: ScopeOrNope -->
+    <div class="case-study glass-card-amber reveal">
+      <div class="case-study-header">
+        <div>
+          <div class="case-company">Personal Project · Indie SaaS</div>
+          <h3 class="case-title">ScopeOrNope</h3>
+          <div class="case-meta">Founder & Sole Engineer · 2026 · Full-Stack TypeScript</div>
+        </div>
+        <div class="case-outcome-badge">Zero → production</div>
+      </div>
+
+      <p class="case-context">
+        A SaaS tool for freelance creatives that classifies client change requests as in-scope,
+        out-of-scope, or unclear — then generates a professional, tone-matched response in seconds.
+        Scoped deliberately: not a CRM or project manager, just a focused answer to scope creep.
+      </p>
+
+      <div class="screenshot-showcase">
+        <div class="shot-tabs">
+          @for (shot of shots; track shot.label; let i = $index) {
+            <button class="shot-tab" [class.shot-tab-active]="activeShot === i" (click)="activeShot = i">
+              {{ shot.label }}
+            </button>
+          }
+        </div>
+        <div class="shot-browser">
+          <div class="shot-chrome">
+            <div class="shot-dots">
+              <span class="dot-close"></span>
+              <span class="dot-min"></span>
+              <span class="dot-max"></span>
+            </div>
+            <div class="shot-url">{{ shots[activeShot].url }}</div>
+          </div>
+          <div class="shot-frame">
+            @for (shot of shots; track shot.label; let i = $index) {
+              <img [src]="shot.src" [alt]="shot.alt" class="shot-img" [class.shot-img-active]="activeShot === i" />
+            }
+          </div>
+        </div>
+        <div class="shot-live-cta">
+          <a href="https://www.scopeornope.com" target="_blank" rel="noopener noreferrer" class="btn-live">
+            Visit ScopeOrNope
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <ul class="case-bullets">
+        <li>Hybrid classification engine: a rule-based classifier (token matching + substitution-phrase detection, fully offline) escalates to claude-haiku-4-5 with prompt caching only on ambiguous requests or Pro-tier users — graceful degradation to offline if the API is unavailable</li>
+        <li>AI response refinement detects secondary risk signals (revision_risky, timeline_impacting, fee_impacting) surfaced as inline warnings alongside the tone-matched draft; a separate scope gap detector flags vague boundaries in the project scope document</li>
+        <li>Full SaaS billing pattern: Stripe webhook handler is the sole writer of subscription_tier (enforced at the RLS level); feature gates are verified in server actions against the Supabase user object — never trusting client input</li>
+        <li>Security-first database design: Row-Level Security on every table, FOR UPDATE locking for concurrent revision-log writes, unique constraint on (project_id, revision_number) backed by a transaction</li>
+        <li>Privacy-first analytics: PostHog with an explicit property allowlist that blocks any key matching /scope/, /client/, or /content/ patterns and auto-redacts long strings before they reach third-party telemetry</li>
+      </ul>
+
+      <div class="case-stack">
+        @for (t of ['Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Supabase', 'Drizzle ORM', 'Anthropic API', 'Stripe', 'PostHog', 'Vercel']; track t) {
           <span class="tech-badge">{{ t }}</span>
         }
       </div>

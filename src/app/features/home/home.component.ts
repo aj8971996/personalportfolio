@@ -11,6 +11,13 @@ import { RouterModule } from '@angular/router';
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   terminalText = '';
   private readonly fullTerminalText = '> building at the intersection of systems and stakeholders';
+
+  activeShot = 0;
+  readonly shots = [
+    { label: 'Dashboard', url: 'scopeornope.app/dashboard',    src: 'assets/images/dashboard.png',      alt: 'ScopeOrNope dashboard showing scope risk across active projects' },
+    { label: 'Request',   url: 'scopeornope.app/check',        src: 'assets/images/request_input.png',  alt: 'Client change request input and classification form' },
+    { label: 'Results',   url: 'scopeornope.app/check#result', src: 'assets/images/request_output.png', alt: 'Scope classification result with generated tone-matched response' },
+  ];
   private typeInterval?: ReturnType<typeof setInterval>;
   private observer?: IntersectionObserver;
 
