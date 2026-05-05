@@ -674,3 +674,69 @@
 
   &:hover { color: var(--accent-bright); }
 }
+
+/* ── Mobile ─────────────────────────────────────────────────── */
+@media (max-width: 639px) {
+
+  /* Case cards: tighter padding */
+  .case-study {
+    padding: 1.25rem 1rem 1rem;
+  }
+
+  /* ScopeOrNope header: stack trigger above actions row */
+  .case-header-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .case-header-row .case-header-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Sphere / CCSD: move badge + chevron below the title block */
+  .case-study > .case-trigger {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+
+    .case-trigger-right {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
+
+  /* Screenshot tabs: horizontally scrollable on very narrow screens */
+  .shot-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  /* Timeline header: stack period / tag below the title */
+  .timeline-header {
+    flex-direction: column;
+    gap: 0.375rem;
+
+    .timeline-right {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Contact card: reduce generous desktop padding */
+  .contact-card {
+    padding: 1.75rem 1.25rem;
+  }
+}
