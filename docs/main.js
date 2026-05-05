@@ -627,7 +627,7 @@ var HomeComponent = class _HomeComponent {
       \u0275\u0275text(140, "Forward Deployed Engineer \xB7 Oct 2025 \u2013 Present \xB7 Contract \u2192 FTE");
       \u0275\u0275elementEnd()();
       \u0275\u0275elementStart(141, "div", 73)(142, "div", 49);
-      \u0275\u0275text(143, "Executive buy-in secured");
+      \u0275\u0275text(143, "Buy-in secured");
       \u0275\u0275elementEnd();
       \u0275\u0275namespaceSVG();
       \u0275\u0275elementStart(144, "svg", 46);
