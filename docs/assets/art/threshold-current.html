@@ -304,14 +304,99 @@
       pointer-events: none;
       letter-spacing: 0.04em;
     }
+
+    /* ── Mobile toggle button (hidden on desktop) ── */
+    .mobile-params-toggle {
+      display: none;
+      padding: 4px 10px;
+      font-size: 0.68rem;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      background: #f4f4f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #555;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .mobile-params-toggle:hover { background: #e8e8e4; border-color: #bbb; }
+
+    /* ── Mobile layout (portrait phones and small tablets) ── */
+    @media (max-width: 767px) {
+      .mobile-params-toggle { display: block; }
+
+      body {
+        flex-direction: column;
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      #canvas-container {
+        order: 1;
+        flex: 1;
+        min-height: 0;
+      }
+
+      #sidebar {
+        order: 2;
+        width: 100%;
+        max-height: 44dvh;
+        border-right: none;
+        border-top: 2px solid #e2e2dc;
+        overflow-y: auto;
+        flex-shrink: 0;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px 8px;
+      }
+
+      .seed-row    { padding: 8px 16px; }
+      .params-section { padding: 10px 16px; }
+      .legend      { padding: 8px 16px; }
+
+      .actions {
+        padding: 0 16px 14px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .action-btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        font-size: 0.7rem;
+        padding: 7px 10px;
+      }
+
+      /* Collapsed state hides the params/legend/actions */
+      #sidebar.collapsed .params-section,
+      #sidebar.collapsed .legend,
+      #sidebar.collapsed .actions { display: none; }
+
+      /* Larger touch targets for sliders */
+      .param-slider { height: 6px; }
+      .param-slider::-webkit-slider-thumb { width: 20px; height: 20px; }
+      .param-slider::-moz-range-thumb     { width: 20px; height: 20px; }
+    }
   </style>
 </head>
 <body>
 
 <div id="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-title">Threshold Current</div>
-    <div class="sidebar-sub">Alex Barkus · 2026</div>
+    <div>
+      <div class="sidebar-title">Threshold Current</div>
+      <div class="sidebar-sub">Alex Barkus · 2026</div>
+    </div>
+    <button class="mobile-params-toggle" id="mobile-params-toggle" aria-expanded="false">
+      Parameters ▲
+    </button>
   </div>
 
   <div class="seed-row">
@@ -686,6 +771,39 @@
   document.getElementById('btn-download').addEventListener('click', () => {
     if (sketch) sketch.downloadFrame();
   });
+
+  // ── Mobile controls toggle ──────────────────────────────────────────────────
+  const sidebar = document.getElementById('sidebar');
+  const mobileParamsToggle = document.getElementById('mobile-params-toggle');
+
+  function syncMobileLayout() {
+    if (window.innerWidth <= 767) {
+      if (!sidebar.classList.contains('collapsed') && !mobileParamsToggle._wasToggled) {
+        sidebar.classList.add('collapsed');
+        mobileParamsToggle.textContent = 'Parameters ▲';
+        mobileParamsToggle.setAttribute('aria-expanded', 'false');
+      }
+    } else {
+      sidebar.classList.remove('collapsed');
+    }
+  }
+
+  mobileParamsToggle.addEventListener('click', () => {
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    mobileParamsToggle._wasToggled = true;
+    if (isCollapsed) {
+      sidebar.classList.remove('collapsed');
+      mobileParamsToggle.textContent = 'Parameters ▼';
+      mobileParamsToggle.setAttribute('aria-expanded', 'true');
+    } else {
+      sidebar.classList.add('collapsed');
+      mobileParamsToggle.textContent = 'Parameters ▲';
+      mobileParamsToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  window.addEventListener('resize', syncMobileLayout);
+  syncMobileLayout();
 
   // ── Boot ────────────────────────────────────────────────────────────────────
   mountSketch();

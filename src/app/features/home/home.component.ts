@@ -152,7 +152,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.bgCtx!.fillStyle = '#09090B';
     this.bgCtx!.fillRect(0, 0, c.width, c.height);
     const w = c.width, h = c.height;
-    this.bgParticles = Array.from({ length: this.BG_COUNT }, () => ({
+    const count = w < 768 ? 80 : this.BG_COUNT;
+    this.bgParticles = Array.from({ length: count }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
       age: Math.floor(Math.random() * 60),

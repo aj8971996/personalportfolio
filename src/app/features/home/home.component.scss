@@ -678,6 +678,20 @@
 /* ── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 639px) {
 
+  /* Hero: reduce top/bottom padding to avoid large dead space */
+  .hero-inner {
+    padding-top: 4.5rem;
+    padding-bottom: 3rem;
+  }
+
+  /* Terminal line: allow text to wrap rather than overflow */
+  .terminal-line {
+    display: flex;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
+  }
+
   /* Case cards: tighter padding */
   .case-study {
     padding: 1.25rem 1rem 1rem;

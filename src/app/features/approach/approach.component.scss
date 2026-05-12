@@ -291,6 +291,18 @@
   color: var(--text-muted);
 }
 
+/* ── Mobile ────────────────────────────────────────────────── */
+@media (max-width: 639px) {
+  .page-hero {
+    padding: 4.5rem 0 3rem;
+  }
+
+  .edge-block {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
 /* ── CTA ───────────────────────────────────────────────────── */
 .cta-block {
   display: flex;
