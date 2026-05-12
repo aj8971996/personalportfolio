@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRD Generator — Alex Barkus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #09090b;
+      color: #f4f4f5;
+      font-family: 'Inter', sans-serif;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+    input, textarea, select {
+      background: #18181c;
+      border: 1px solid #2a2a30;
+      border-radius: 6px;
+      color: #f4f4f5;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #f59e0b; }
+    textarea { resize: vertical; }
+    input::placeholder, textarea::placeholder { color: #3f3f46; }
+    input[type="date"] { color-scheme: dark; }
+
+    button { font-family: 'Inter', sans-serif; }
+
+    /* Priority chips */
+    .p-M { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25); color: #fca5a5; }
+    .p-S { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+    .p-C { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.25); color: #a5b4fc; }
+    .p-W { background: rgba(113,113,122,0.1); border-color: rgba(113,113,122,0.25); color: #a1a1aa; }
+
+    /* Preview */
+    .preview-h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.375rem; font-weight: 700; color: #f4f4f5; }
+    .preview-h2 { font-family: 'Space Grotesk', sans-serif; font-size: 0.6875rem; font-weight: 700; color: #f59e0b; letter-spacing: 0.1em; text-transform: uppercase; margin: 1.25rem 0 0.5rem; border-bottom: 1px solid #1e1e24; padding-bottom: 0.3rem; }
+    .preview-h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.8125rem; font-weight: 600; color: #e4e4e7; margin: 0.625rem 0 0.25rem; }
+    .preview-p { font-size: 0.7875rem; color: #a1a1aa; line-height: 1.65; white-space: pre-line; }
+    .preview-placeholder { font-size: 0.75rem; color: #3f3f46; font-style: italic; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.75s linear infinite; }
+
+    @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .fadein { animation: fadein 0.2s ease; }
+
+    /* Responsive layout */
+    #shell { display: flex; height: 100dvh; overflow: hidden; }
+
+    #sidebar {
+      width: 210px;
+      flex-shrink: 0;
+      background: #0c0c0f;
+      border-right: 1px solid #1a1a20;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+    #form-area { flex: 1; overflow-y: auto; padding: 2rem 2rem 1.5rem; }
+
+    #preview {
+      width: 360px;
+      flex-shrink: 0;
+      border-left: 1px solid #1a1a20;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .mobile-bar { display: none; }
+    #mobile-preview { display: none; }
+
+    @media (max-width: 1100px) {
+      #preview { width: 300px; }
+    }
+    @media (max-width: 900px) {
+      #preview { display: none; }
+    }
+    @media (max-width: 640px) {
+      #sidebar { display: none; }
+      .mobile-bar { display: flex; }
+      #form-area { padding: 1.25rem 1rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STEPS = [
+  { label: 'Header',            section: 'header',          hasAI: false },
+  { label: 'Problem',           section: 'problem',         hasAI: true  },
+  { label: 'Goals',             section: 'goals',           hasAI: true  },
+  { label: 'Users',             section: 'users',           hasAI: true  },
+  { label: 'Features',          section: 'features',        hasAI: true  },
+  { label: 'Non-Functional',    section: 'nonFunctional',   hasAI: false },
+  { label: 'Constraints',       section: 'constraints',     hasAI: false },
+  { label: 'Timeline',          section: 'timeline',        hasAI: false },
+];
+
+const PRIORITIES = { M: 'Must Have', S: 'Should Have', C: 'Could Have', W: "Won't Have" };
+
+const EMPTY_DOC = {
+  header:          { name: '', author: '', status: 'Draft', releaseDate: '', oneLiner: '' },
+  problem:         { statement: '', audience: '', evidence: '' },
+  goals:           { objectives: '', metrics: '', launchCriteria: '' },
+  users:           { primaryPersona: '', secondaryPersona: '', scenarios: '' },
+  features:        [],
+  nonFunctional:   { performance: '', security: '', accessibility: '', platforms: '' },
+  constraints:     { outOfScope: '', risks: '', dependencies: '', assumptions: '' },
+  timeline:        { milestones: '', stakeholders: '' },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
+
+function extract(text, start, ends) {
+  const sm = Array.isArray(start) ? start : [start];
+  let si = -1;
+  for (const s of sm) {
+    const i = text.indexOf(s);
+    if (i !== -1) { si = i + s.length; break; }
+  }
+  if (si === -1) return '';
+  const em = ends ? (Array.isArray(ends) ? ends : [ends]) : [];
+  let ei = text.length;
+  for (const e of em) {
+    const i = text.indexOf(e, si);
+    if (i !== -1 && i < ei) ei = i;
+  }
+  return text.slice(si, ei).trim();
+}
+
+function parseAIFeatures(text) {
+  return text.split(/---+/).map(block => {
+    const name = extract(block, 'FEATURE:', ['PRIORITY:', 'DESC:', 'STORY:']);
+    const pri  = extract(block, 'PRIORITY:', ['DESC:', 'STORY:', 'FEATURE:']);
+    const desc = extract(block, 'DESC:', ['STORY:', 'FEATURE:', '---']);
+    const story = extract(block, 'STORY:', ['FEATURE:', '---']);
+    if (!name.trim()) return null;
+    const p = pri.trim().charAt(0).toUpperCase();
+    return { id: Date.now() + Math.random(), name: name.trim(), desc: desc.trim(),
+             priority: 'MSCW'.includes(p) ? p : 'S', userStory: story.trim() };
+  }).filter(Boolean);
+}
+
+function buildAIPrompt(section, doc) {
+  const ctx = `Product: "${doc.header.name || 'unnamed'}"
+One-liner: ${doc.header.oneLiner || 'not defined'}
+Problem: ${doc.problem.statement || 'not defined'}
+Audience: ${doc.problem.audience || 'not defined'}`;
+
+  if (section === 'problem') return `${ctx}
+
+Write a concise PRD Problem Statement section for this product. Return exactly three labeled sections:
+
+Problem Statement: [2-3 sentence description of the problem (not a solution), why it matters]
+
+Target Audience: [1-2 sentences on who experiences this problem]
+
+Evidence: [3-4 bullet points of quantitative or qualitative evidence that the problem exists]
+
+Be specific. No preamble.`;
+
+  if (section === 'goals') return `${ctx}
+
+Write a concise PRD Goals & Success Metrics section. Return exactly three labeled sections:
+
+Objectives: [2-3 SMART business goals]
+
+Success Metrics: [3-4 measurable KPIs]
+
+Launch Criteria: [2-3 specific go/no-go gates before shipping]
+
+Be specific. No preamble.`;
+
+  if (section === 'users') return `${ctx}
+
+Write a PRD User Personas section. Return exactly three labeled sections:
+
+Primary Persona: [Name, role, main goal, key frustration, how they use the product — 3-4 sentences]
+
+Secondary Persona: [Name, role, main goal — 2-3 sentences]
+
+Key Scenarios: [2 short user journey narratives, numbered]
+
+No preamble.`;
+
+  if (section === 'features') return `${ctx}
+Objectives: ${doc.goals.objectives || 'not defined'}
+
+Generate 5-7 features for this product. Format EACH feature exactly like this, separated by ---:
+
+FEATURE: [short name]
+PRIORITY: [M, S, C, or W — one letter only]
+DESC: [1-2 sentence description]
+STORY: As a [user], I want [goal] so that [benefit]
+
+---
+
+Use MoSCoW: M=Must Have, S=Should Have, C=Could Have, W=Won't Have. No preamble.`;
+
+  return '';
+}
+
+function buildMarkdown(doc) {
+  const date = new Date().toISOString().split('T')[0];
+  let md = `# ${doc.header.name || 'Untitled PRD'}\n\n`;
+  md += `**Author:** ${doc.header.author || '—'}  \n`;
+  md += `**Status:** ${doc.header.status}  \n`;
+  md += `**Release Target:** ${doc.header.releaseDate || '—'}  \n`;
+  md += `**Generated:** ${date}  \n\n`;
+  if (doc.header.oneLiner) md += `> ${doc.header.oneLiner}\n\n---\n\n`;
+
+  md += `## 1. Problem Statement\n\n`;
+  if (doc.problem.statement)  md += `**Problem:** ${doc.problem.statement}\n\n`;
+  if (doc.problem.audience)   md += `**Audience:** ${doc.problem.audience}\n\n`;
+  if (doc.problem.evidence)   md += `**Evidence:**\n${doc.problem.evidence}\n\n`;
+
+  md += `## 2. Goals & Success Metrics\n\n`;
+  if (doc.goals.objectives)     md += `**Objectives:**\n${doc.goals.objectives}\n\n`;
+  if (doc.goals.metrics)        md += `**Success Metrics:**\n${doc.goals.metrics}\n\n`;
+  if (doc.goals.launchCriteria) md += `**Launch Criteria:**\n${doc.goals.launchCriteria}\n\n`;
+
+  md += `## 3. User Personas\n\n`;
+  if (doc.users.primaryPersona)   md += `**Primary Persona:**\n${doc.users.primaryPersona}\n\n`;
+  if (doc.users.secondaryPersona) md += `**Secondary Persona:**\n${doc.users.secondaryPersona}\n\n`;
+  if (doc.users.scenarios)        md += `**Key Scenarios:**\n${doc.users.scenarios}\n\n`;
+
+  md += `## 4. Feature List\n\n`;
+  if (doc.features.length === 0) md += '_No features defined._\n\n';
+  else doc.features.forEach((f, i) => {
+    md += `### ${i+1}. ${f.name || 'Unnamed'} [${PRIORITIES[f.priority]}]\n\n`;
+    if (f.desc)      md += `${f.desc}\n\n`;
+    if (f.userStory) md += `*${f.userStory}*\n\n`;
+  });
+
+  md += `## 5. Non-Functional Requirements\n\n`;
+  if (doc.nonFunctional.performance)   md += `**Performance:** ${doc.nonFunctional.performance}\n\n`;
+  if (doc.nonFunctional.security)      md += `**Security:** ${doc.nonFunctional.security}\n\n`;
+  if (doc.nonFunctional.accessibility) md += `**Accessibility:** ${doc.nonFunctional.accessibility}\n\n`;
+  if (doc.nonFunctional.platforms)     md += `**Platforms:** ${doc.nonFunctional.platforms}\n\n`;
+
+  md += `## 6. Constraints & Risks\n\n`;
+  if (doc.constraints.outOfScope)   md += `**Out of Scope:** ${doc.constraints.outOfScope}\n\n`;
+  if (doc.constraints.risks)        md += `**Risks:** ${doc.constraints.risks}\n\n`;
+  if (doc.constraints.dependencies) md += `**Dependencies:** ${doc.constraints.dependencies}\n\n`;
+  if (doc.constraints.assumptions)  md += `**Assumptions:** ${doc.constraints.assumptions}\n\n`;
+
+  md += `## 7. Timeline & Stakeholders\n\n`;
+  if (doc.timeline.milestones)   md += `**Milestones:**\n${doc.timeline.milestones}\n\n`;
+  if (doc.timeline.stakeholders) md += `**Stakeholders:**\n${doc.timeline.stakeholders}\n\n`;
+
+  return md;
+}
+
+async function runDocxExport(doc) {
+  if (!window.docx) throw new Error('docx library not loaded');
+  const { Document, Paragraph, TextRun, HeadingLevel, Packer } = window.docx;
+
+  const h1   = t => new Paragraph({ text: t, heading: HeadingLevel.HEADING_1 });
+  const h2   = t => new Paragraph({ text: t, heading: HeadingLevel.HEADING_2 });
+  const h3   = t => new Paragraph({ text: t, heading: HeadingLevel.HEADING_3 });
+  const body = t => new Paragraph({ children: [new TextRun({ text: t || '—' })] });
+  const kv   = (k, v) => new Paragraph({ children: [new TextRun({ text: k + ': ', bold: true }), new TextRun({ text: v || '—' })] });
+  const gap  = () => new Paragraph({ text: '' });
+
+  const children = [
+    h1(doc.header.name || 'Untitled PRD'),
+    gap(),
+    kv('Author', doc.header.author),
+    kv('Status', doc.header.status),
+    kv('Release Target', doc.header.releaseDate),
+    ...(doc.header.oneLiner ? [gap(), body(doc.header.oneLiner)] : []),
+    gap(),
+    h2('1. Problem Statement'),
+    kv('Problem', doc.problem.statement),
+    kv('Target Audience', doc.problem.audience),
+    kv('Supporting Evidence', doc.problem.evidence),
+    gap(),
+    h2('2. Goals & Success Metrics'),
+    kv('Objectives', doc.goals.objectives),
+    kv('Success Metrics', doc.goals.metrics),
+    kv('Launch Criteria', doc.goals.launchCriteria),
+    gap(),
+    h2('3. User Personas'),
+    h3('Primary Persona'), body(doc.users.primaryPersona),
+    h3('Secondary Persona'), body(doc.users.secondaryPersona),
+    h3('Key Scenarios'), body(doc.users.scenarios),
+    gap(),
+    h2('4. Feature List'),
+    ...(doc.features.length === 0
+      ? [body('No features defined.')]
+      : doc.features.flatMap((f, i) => [
+          h3(`${i+1}. ${f.name || 'Unnamed'} [${PRIORITIES[f.priority]}]`),
+          ...(f.desc      ? [body(f.desc)]               : []),
+          ...(f.userStory ? [kv('User Story', f.userStory)] : []),
+        ])),
+    gap(),
+    h2('5. Non-Functional Requirements'),
+    kv('Performance', doc.nonFunctional.performance),
+    kv('Security', doc.nonFunctional.security),
+    kv('Accessibility', doc.nonFunctional.accessibility),
+    kv('Platforms', doc.nonFunctional.platforms),
+    gap(),
+    h2('6. Constraints & Risks'),
+    kv('Out of Scope', doc.constraints.outOfScope),
+    kv('Known Risks', doc.constraints.risks),
+    kv('Dependencies', doc.constraints.dependencies),
+    kv('Assumptions', doc.constraints.assumptions),
+    gap(),
+    h2('7. Timeline & Stakeholders'),
+    h3('Milestones'), body(doc.timeline.milestones),
+    h3('Stakeholders'), body(doc.timeline.stakeholders),
+  ];
+
+  const docxDoc = new Document({ sections: [{ children }] });
+  const blob = await Packer.toBlob(docxDoc);
+  const slug = (doc.header.name || 'prd').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = slug + '-prd.docx'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function triggerDownload(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function stepDone(doc, i) {
+  switch (i) {
+    case 0: return !!(doc.header.name && doc.header.author);
+    case 1: return !!doc.problem.statement;
+    case 2: return !!doc.goals.objectives;
+    case 3: return !!doc.users.primaryPersona;
+    case 4: return doc.features.length > 0;
+    case 5: return !!(doc.nonFunctional.performance || doc.nonFunctional.security);
+    case 6: return !!(doc.constraints.outOfScope || doc.constraints.risks);
+    case 7: return !!doc.timeline.milestones;
+    default: return false;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Small UI primitives
+// ─────────────────────────────────────────────────────────────────────────────
+
+const S = {
+  input: { width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem', background: '#18181c', border: '1px solid #2a2a30', borderRadius: '6px', color: '#f4f4f5', fontFamily: 'Inter, sans-serif', outline: 'none' },
+  ta:    { width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem', background: '#18181c', border: '1px solid #2a2a30', borderRadius: '6px', color: '#f4f4f5', fontFamily: 'Inter, sans-serif', outline: 'none', resize: 'vertical', lineHeight: 1.6 },
+  label: { display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#71717a', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '0.35rem' },
+  hint:  { fontSize: '0.6875rem', color: '#3f3f46', marginTop: '0.125rem', lineHeight: 1.4 },
+  field: { display: 'flex', flexDirection: 'column', gap: '0' },
+};
+
+function FI({ label, hint, value, onChange, placeholder, type = 'text' }) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <div style={S.field}>
+      <label style={S.label}>{label}</label>
+      {hint && <span style={S.hint}>{hint}</span>}
+      <input
+        type={type} value={value} placeholder={placeholder}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}
+        style={{ ...S.input, marginTop: hint ? '0.35rem' : '0.25rem', borderColor: focus ? '#f59e0b' : '#2a2a30' }}
+      />
+    </div>
+  );
+}
+
+function TA({ label, hint, value, onChange, placeholder, rows = 3 }) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <div style={S.field}>
+      <label style={S.label}>{label}</label>
+      {hint && <span style={S.hint}>{hint}</span>}
+      <textarea
+        value={value} placeholder={placeholder} rows={rows}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}
+        style={{ ...S.ta, marginTop: hint ? '0.35rem' : '0.25rem', borderColor: focus ? '#f59e0b' : '#2a2a30' }}
+      />
+    </div>
+  );
+}
+
+function AIBtn({ loading, onClick }) {
+  return (
+    <button onClick={onClick} disabled={loading} style={{
+      display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
+      padding: '0.35rem 0.75rem', background: 'rgba(245,158,11,0.07)',
+      border: '1px solid rgba(245,158,11,0.22)', borderRadius: '6px',
+      color: '#f59e0b', fontSize: '0.75rem', fontWeight: 500,
+      cursor: loading ? 'wait' : 'pointer', flexShrink: 0,
+    }}>
+      {loading
+        ? <svg className="spin" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        : <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l1.9 5.7L20 12l-6.1 3.3L12 21l-1.9-5.7L4 12l6.1-3.3z"/></svg>
+      }
+      {loading ? 'Generating…' : 'AI Suggest'}
+    </button>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Step forms
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Step0({ data, set }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <FI label="Product Name" hint="The name stakeholders will use" value={data.name} onChange={u('name')} placeholder="e.g. ScopeOrNope, DataDash" />
+      <FI label="Author / Owner" value={data.author} onChange={u('author')} placeholder="Your name" />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
+        <div style={S.field}>
+          <label style={S.label}>Status</label>
+          <select value={data.status} onChange={e => u('status')(e.target.value)}
+            style={{ ...S.input, marginTop: '0.25rem', cursor: 'pointer' }}>
+            <option>Draft</option>
+            <option>In Review</option>
+            <option>Approved</option>
+            <option>Deprecated</option>
+          </select>
+        </div>
+        <FI label="Release Date" type="date" value={data.releaseDate} onChange={u('releaseDate')} />
+      </div>
+      <FI label="One-Liner" hint="One sentence — what it does and for whom"
+        value={data.oneLiner} onChange={u('oneLiner')}
+        placeholder="ScopeOrNope helps freelancers classify client requests as in- or out-of-scope." />
+    </div>
+  );
+}
+
+function Step1({ data, set, onAI, aiLoading }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Describe the problem without referencing the solution</span>
+        <AIBtn loading={aiLoading} onClick={onAI} />
+      </div>
+      <TA label="Problem Statement" hint="What's wrong? Why does it matter? Not a solution."
+        value={data.statement} onChange={u('statement')} rows={4}
+        placeholder="Freelancers spend hours each month drafting responses to out-of-scope requests, damaging client relationships and their earnings." />
+      <TA label="Target Audience" hint="Who experiences this most acutely?"
+        value={data.audience} onChange={u('audience')} rows={2}
+        placeholder="Independent freelancers and small agencies (1–5 people) working on fixed-price contracts." />
+      <TA label="Supporting Evidence" hint="Data, research, or anecdotes that confirm the problem"
+        value={data.evidence} onChange={u('evidence')} rows={4}
+        placeholder="• 73% of surveyed freelancers cite scope creep as their #1 source of project stress&#10;• Average freelancer spends 3.2 hrs/month on scope negotiation&#10;• r/freelance threads on this topic regularly exceed 1k upvotes" />
+    </div>
+  );
+}
+
+function Step2({ data, set, onAI, aiLoading }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define what success looks like, measurably</span>
+        <AIBtn loading={aiLoading} onClick={onAI} />
+      </div>
+      <TA label="Business Objectives" hint="SMART goals — specific, measurable, time-bound"
+        value={data.objectives} onChange={u('objectives')} rows={4}
+        placeholder="• Reach 500 MAU within 6 months of launch&#10;• Achieve NPS ≥ 40 by end of Q3&#10;• Convert 8% of free users to paid within 90 days" />
+      <TA label="Success Metrics / KPIs" hint="Quantitative measures of progress"
+        value={data.metrics} onChange={u('metrics')} rows={3}
+        placeholder="• MAU, DAU, D30 retention&#10;• Time-to-first-classification < 3 min&#10;• % using response templates&#10;• MRR growth rate" />
+      <TA label="Launch Criteria" hint="Go/no-go gates that must be true before shipping"
+        value={data.launchCriteria} onChange={u('launchCriteria')} rows={3}
+        placeholder="• Auth, billing, and classify flow fully functional&#10;• Zero P0/P1 bugs in prod for 48 hrs&#10;• Privacy review complete&#10;• Onboarding completion ≥ 70% in beta" />
+    </div>
+  );
+}
+
+function Step3({ data, set, onAI, aiLoading }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define who you're building for</span>
+        <AIBtn loading={aiLoading} onClick={onAI} />
+      </div>
+      <TA label="Primary Persona" hint="Name, role, goal, frustration, how they use the product"
+        value={data.primaryPersona} onChange={u('primaryPersona')} rows={5}
+        placeholder="Jordan, 32 — Independent UX designer. Juggles 3–4 fixed-price clients. Main frustration: clients expanding scope without acknowledging the cost. Wants a professional way to push back without damaging the relationship." />
+      <TA label="Secondary Persona" hint="A second distinct user type"
+        value={data.secondaryPersona} onChange={u('secondaryPersona')} rows={3}
+        placeholder="Maya, 28 — 3-person agency owner. Manages devs and all client comms. Needs consistent scope language across her team and a paper trail for disputes." />
+      <TA label="Key User Scenarios" hint="2–3 short narratives of real tasks"
+        value={data.scenarios} onChange={u('scenarios')} rows={4}
+        placeholder="1. Jordan pastes a client's 'quick addition' email into ScopeOrNope, gets an instant classification, picks a suggested tone, and sends — under 2 minutes.&#10;&#10;2. Maya reviews the last 30 change requests with her team to identify scope drift patterns before a contract renewal." />
+    </div>
+  );
+}
+
+function Step4({ features, setFeatures, onAI, aiLoading }) {
+  const add = () => setFeatures(fs => [...fs, { id: Date.now() + Math.random(), name: '', desc: '', priority: 'S', userStory: '' }]);
+  const upd = (id, field, val) => setFeatures(fs => fs.map(f => f.id === id ? { ...f, [field]: val } : f));
+  const del = (id) => setFeatures(fs => fs.filter(f => f.id !== id));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
+        <div>
+          <span style={{ fontSize: '0.8rem', color: '#52525b', display: 'block', marginBottom: '0.4rem' }}>MoSCoW prioritization — add manually or use AI Suggest</span>
+          <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+            {Object.entries(PRIORITIES).map(([k, v]) => (
+              <span key={k} className={`p-${k}`} style={{ padding: '0.1rem 0.45rem', borderRadius: '4px', border: '1px solid', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{k}: {v}</span>
+            ))}
+          </div>
+        </div>
+        <AIBtn loading={aiLoading} onClick={onAI} />
+      </div>
+
+      {features.length === 0 && (
+        <div style={{ padding: '1.75rem', border: '1px dashed #2a2a30', borderRadius: '8px', textAlign: 'center', color: '#3f3f46', fontSize: '0.8rem' }}>
+          No features yet. Add one below or use AI Suggest.
+        </div>
+      )}
+
+      {features.map((f, idx) => (
+        <FeatureCard key={f.id} f={f} idx={idx} upd={upd} del={del} />
+      ))}
+
+      <button onClick={add} style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+        padding: '0.6rem', background: 'transparent', border: '1px dashed #2a2a30',
+        borderRadius: '7px', color: '#52525b', fontSize: '0.8rem', cursor: 'pointer',
+        transition: 'all 0.15s',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#f59e0b'; e.currentTarget.style.color = '#f59e0b'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a30'; e.currentTarget.style.color = '#52525b'; }}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add Feature
+      </button>
+    </div>
+  );
+}
+
+function FeatureCard({ f, idx, upd, del }) {
+  const [taFocus, setTaFocus] = useState(false);
+  const [stFocus, setStFocus] = useState(false);
+  return (
+    <div style={{ padding: '0.875rem', background: '#0f0f12', border: '1px solid #1e1e24', borderRadius: '8px' }}>
+      <div style={{ display: 'flex', gap: '0.625rem', alignItems: 'center', marginBottom: '0.625rem' }}>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: '#3f3f46', flexShrink: 0 }}>
+          F{String(idx+1).padStart(2,'0')}
+        </span>
+        <input value={f.name} onChange={e => upd(f.id, 'name', e.target.value)}
+          placeholder="Feature name"
+          style={{ ...S.input, flex: 1, padding: '0.35rem 0.625rem', fontSize: '0.875rem', fontWeight: 500 }}
+          onFocus={e => e.target.style.borderColor = '#f59e0b'}
+          onBlur={e => e.target.style.borderColor = '#2a2a30'}
+        />
+        <select value={f.priority} onChange={e => upd(f.id, 'priority', e.target.value)}
+          className={`p-${f.priority}`}
+          style={{ padding: '0.35rem 0.5rem', border: '1px solid', borderRadius: '5px', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, cursor: 'pointer', outline: 'none', flexShrink: 0, minWidth: '80px' }}>
+          <option value="M">M — Must</option>
+          <option value="S">S — Should</option>
+          <option value="C">C — Could</option>
+          <option value="W">W — Won't</option>
+        </select>
+        <button onClick={() => del(f.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3f3f46', padding: '0.25rem', flexShrink: 0, display: 'flex', alignItems: 'center' }}
+          onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
+          onMouseLeave={e => e.currentTarget.style.color = '#3f3f46'}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <textarea value={f.desc} onChange={e => upd(f.id, 'desc', e.target.value)}
+        placeholder="What does this feature do and why does it matter?"
+        rows={2}
+        onFocus={() => setTaFocus(true)} onBlur={() => setTaFocus(false)}
+        style={{ ...S.ta, fontSize: '0.8rem', marginBottom: '0.5rem', borderColor: taFocus ? '#f59e0b' : '#2a2a30' }}
+      />
+      <input value={f.userStory} onChange={e => upd(f.id, 'userStory', e.target.value)}
+        placeholder="As a [user], I want [goal] so that [benefit]"
+        onFocus={() => setStFocus(true)} onBlur={() => setStFocus(false)}
+        style={{ ...S.input, fontSize: '0.78rem', color: '#71717a', fontStyle: 'italic', borderColor: stFocus ? '#f59e0b' : '#2a2a30' }}
+      />
+    </div>
+  );
+}
+
+function Step5({ data, set }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Quality and operational requirements</span>
+      <TA label="Performance" hint="Load time, throughput, latency SLAs"
+        value={data.performance} onChange={u('performance')} rows={3}
+        placeholder="• Page load < 2s on 4G&#10;• API response < 300ms p95&#10;• Handle 200 concurrent users" />
+      <TA label="Security" hint="Auth model, data protection, compliance requirements"
+        value={data.security} onChange={u('security')} rows={3}
+        placeholder="• OAuth 2.0 / JWT auth&#10;• No PII stored beyond email&#10;• API keys encrypted at rest&#10;• OWASP Top 10 compliance" />
+      <TA label="Accessibility" hint="WCAG level, keyboard nav, screen reader support"
+        value={data.accessibility} onChange={u('accessibility')} rows={2}
+        placeholder="• WCAG 2.1 AA&#10;• Full keyboard navigation&#10;• Screen reader compatible" />
+      <TA label="Supported Platforms" hint="Browsers, devices, OS, minimum viewport"
+        value={data.platforms} onChange={u('platforms')} rows={2}
+        placeholder="• Modern evergreen browsers&#10;• Mobile-responsive (iOS Safari, Android Chrome)&#10;• Minimum 375px viewport" />
+    </div>
+  );
+}
+
+function Step6({ data, set }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Bound the project and acknowledge what could go wrong</span>
+      <TA label="Out of Scope" hint="Explicitly NOT building in this version"
+        value={data.outOfScope} onChange={u('outOfScope')} rows={3}
+        placeholder="• Native mobile apps (web-only v1)&#10;• Third-party integrations&#10;• Team collaboration features&#10;• Advanced analytics" />
+      <TA label="Known Risks" hint="What could go wrong? What mitigations exist?"
+        value={data.risks} onChange={u('risks')} rows={3}
+        placeholder="• AI accuracy may vary — mitigated by confidence scores + user override&#10;• API cost overrun — mitigated by rate limiting and caching&#10;• Low adoption — mitigated by Product Hunt launch strategy" />
+      <TA label="Dependencies" hint="External services, teams, or deliverables you rely on"
+        value={data.dependencies} onChange={u('dependencies')} rows={3}
+        placeholder="• Anthropic Claude API for classification&#10;• Stripe for billing&#10;• SendGrid for transactional email&#10;• Legal ToS review before launch" />
+      <TA label="Assumptions" hint="Things you're treating as true to move forward"
+        value={data.assumptions} onChange={u('assumptions')} rows={3}
+        placeholder="• Users comfortable with AI-generated suggestions&#10;• English-only for v1&#10;• Freemium converts at ≥ 5%&#10;• No enterprise/SSO requirements for v1" />
+    </div>
+  );
+}
+
+function Step7({ data, set }) {
+  const u = f => v => set({ ...data, [f]: v });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Map the road to launch and align stakeholders</span>
+      <TA label="Milestones" hint="One milestone per line — date + deliverable"
+        value={data.milestones} onChange={u('milestones')} rows={6}
+        placeholder="2026-06-01 — Internal alpha (core classify flow complete)&#10;2026-07-01 — Private beta (auth + billing, 50 users)&#10;2026-08-01 — Launch criteria review&#10;2026-08-15 — Public launch + Product Hunt&#10;2026-10-01 — V1.1: team features" />
+      <TA label="Stakeholders" hint="Who needs to review, approve, or be informed?"
+        value={data.stakeholders} onChange={u('stakeholders')} rows={4}
+        placeholder="• Alex Barkus (Product Owner / Engineer) — decision maker&#10;• 10 beta testers (freelancers) — feedback loop&#10;• Legal advisor — ToS / privacy review before launch" />
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Live Preview
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Preview({ doc }) {
+  const ph = (content, text) => content
+    ? <p className="preview-p">{content}</p>
+    : <p className="preview-placeholder">{text}</p>;
+
+  return (
+    <div style={{ padding: '1.25rem 1.25rem 2rem', overflowY: 'auto', height: '100%' }}>
+      {/* Header */}
+      <h1 className="preview-h1" style={{ marginBottom: '0.375rem' }}>
+        {doc.header.name || <span className="preview-placeholder">Product Name</span>}
+      </h1>
+      <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.625rem' }}>
+        {doc.header.author && <span style={{ fontSize: '0.7rem', color: '#52525b' }}>by {doc.header.author}</span>}
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', padding: '0.1rem 0.45rem', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.18)', borderRadius: '4px', color: '#f59e0b' }}>{doc.header.status}</span>
+        {doc.header.releaseDate && <span style={{ fontSize: '0.7rem', color: '#52525b' }}>Target: {doc.header.releaseDate}</span>}
+      </div>
+      {doc.header.oneLiner && (
+        <p style={{ fontSize: '0.8rem', color: '#a1a1aa', fontStyle: 'italic', borderLeft: '2px solid #f59e0b', paddingLeft: '0.625rem', marginBottom: '0.75rem', lineHeight: 1.6 }}>
+          {doc.header.oneLiner}
+        </p>
+      )}
+
+      <div className="preview-h2">1. Problem Statement</div>
+      {(doc.problem.statement || doc.problem.audience || doc.problem.evidence) ? (
+        <>
+          {doc.problem.statement  && <><p className="preview-h3">Problem</p><p className="preview-p">{doc.problem.statement}</p></>}
+          {doc.problem.audience   && <><p className="preview-h3">Target Audience</p><p className="preview-p">{doc.problem.audience}</p></>}
+          {doc.problem.evidence   && <><p className="preview-h3">Evidence</p><p className="preview-p">{doc.problem.evidence}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+
+      <div className="preview-h2">2. Goals & Success Metrics</div>
+      {(doc.goals.objectives || doc.goals.metrics || doc.goals.launchCriteria) ? (
+        <>
+          {doc.goals.objectives     && <><p className="preview-h3">Objectives</p><p className="preview-p">{doc.goals.objectives}</p></>}
+          {doc.goals.metrics        && <><p className="preview-h3">Success Metrics</p><p className="preview-p">{doc.goals.metrics}</p></>}
+          {doc.goals.launchCriteria && <><p className="preview-h3">Launch Criteria</p><p className="preview-p">{doc.goals.launchCriteria}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+
+      <div className="preview-h2">3. User Personas</div>
+      {(doc.users.primaryPersona || doc.users.secondaryPersona || doc.users.scenarios) ? (
+        <>
+          {doc.users.primaryPersona   && <><p className="preview-h3">Primary Persona</p><p className="preview-p">{doc.users.primaryPersona}</p></>}
+          {doc.users.secondaryPersona && <><p className="preview-h3">Secondary Persona</p><p className="preview-p">{doc.users.secondaryPersona}</p></>}
+          {doc.users.scenarios        && <><p className="preview-h3">Key Scenarios</p><p className="preview-p">{doc.users.scenarios}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+
+      <div className="preview-h2">4. Feature List</div>
+      {doc.features.length === 0
+        ? <p className="preview-placeholder">No features defined yet…</p>
+        : doc.features.map((f, i) => (
+          <div key={f.id} style={{ marginBottom: '0.625rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem' }}>
+              <p className="preview-h3" style={{ margin: 0 }}>{i+1}. {f.name || 'Unnamed'}</p>
+              <span className={`p-${f.priority}`} style={{ padding: '0.05rem 0.35rem', border: '1px solid', borderRadius: '3px', fontSize: '0.6rem', fontFamily: 'JetBrains Mono', fontWeight: 700 }}>{f.priority}</span>
+            </div>
+            {f.desc      && <p className="preview-p">{f.desc}</p>}
+            {f.userStory && <p style={{ fontSize: '0.75rem', color: '#52525b', fontStyle: 'italic' }}>{f.userStory}</p>}
+          </div>
+        ))
+      }
+
+      <div className="preview-h2">5. Non-Functional Requirements</div>
+      {(doc.nonFunctional.performance || doc.nonFunctional.security || doc.nonFunctional.accessibility || doc.nonFunctional.platforms) ? (
+        <>
+          {doc.nonFunctional.performance   && <><p className="preview-h3">Performance</p><p className="preview-p">{doc.nonFunctional.performance}</p></>}
+          {doc.nonFunctional.security      && <><p className="preview-h3">Security</p><p className="preview-p">{doc.nonFunctional.security}</p></>}
+          {doc.nonFunctional.accessibility && <><p className="preview-h3">Accessibility</p><p className="preview-p">{doc.nonFunctional.accessibility}</p></>}
+          {doc.nonFunctional.platforms     && <><p className="preview-h3">Platforms</p><p className="preview-p">{doc.nonFunctional.platforms}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+
+      <div className="preview-h2">6. Constraints & Risks</div>
+      {(doc.constraints.outOfScope || doc.constraints.risks || doc.constraints.dependencies || doc.constraints.assumptions) ? (
+        <>
+          {doc.constraints.outOfScope   && <><p className="preview-h3">Out of Scope</p><p className="preview-p">{doc.constraints.outOfScope}</p></>}
+          {doc.constraints.risks        && <><p className="preview-h3">Known Risks</p><p className="preview-p">{doc.constraints.risks}</p></>}
+          {doc.constraints.dependencies && <><p className="preview-h3">Dependencies</p><p className="preview-p">{doc.constraints.dependencies}</p></>}
+          {doc.constraints.assumptions  && <><p className="preview-h3">Assumptions</p><p className="preview-p">{doc.constraints.assumptions}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+
+      <div className="preview-h2">7. Timeline & Stakeholders</div>
+      {(doc.timeline.milestones || doc.timeline.stakeholders) ? (
+        <>
+          {doc.timeline.milestones   && <><p className="preview-h3">Milestones</p><p className="preview-p" style={{ fontFamily: 'JetBrains Mono', fontSize: '0.72rem', lineHeight: 1.7 }}>{doc.timeline.milestones}</p></>}
+          {doc.timeline.stakeholders && <><p className="preview-h3">Stakeholders</p><p className="preview-p">{doc.timeline.stakeholders}</p></>}
+        </>
+      ) : <p className="preview-placeholder">Not yet filled in…</p>}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// App
+// ─────────────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [step, setStep] = useState(0);
+  const [doc, setDoc] = useState(EMPTY_DOC);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('prd_key') || '');
+  const [showKey, setShowKey] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [toast, setToast] = useState('');
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
+
+  const notify = msg => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+
+  const saveKey = v => { setApiKey(v); localStorage.setItem('prd_key', v); };
+
+  const setSection = section => newData =>
+    setDoc(d => ({ ...d, [section]: newData }));
+
+  const callAI = async () => {
+    const section = STEPS[step].section;
+    if (!apiKey) { setShowKey(true); setAiError('Enter your Anthropic API key to use AI Suggest.'); return; }
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const prompt = buildAIPrompt(section, doc);
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1400,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `API error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || '';
+      applyAI(section, text);
+      notify('AI suggestion applied ✓');
+    } catch (err) {
+      setAiError(err.message || 'Request failed');
+    }
+    setAiLoading(false);
+  };
+
+  const applyAI = (section, text) => {
+    if (section === 'problem') {
+      setDoc(d => ({ ...d, problem: {
+        statement: extract(text, 'Problem Statement:', ['Target Audience:', 'Evidence:', 'Supporting Evidence:']) || d.problem.statement,
+        audience:  extract(text, 'Target Audience:', ['Evidence:', 'Supporting Evidence:']) || d.problem.audience,
+        evidence:  extract(text, ['Evidence:', 'Supporting Evidence:']) || d.problem.evidence,
+      }}));
+    } else if (section === 'goals') {
+      setDoc(d => ({ ...d, goals: {
+        objectives:     extract(text, 'Objectives:', ['Success Metrics:', 'Metrics:', 'Launch Criteria:']) || d.goals.objectives,
+        metrics:        extract(text, ['Success Metrics:', 'Metrics:'], ['Launch Criteria:', 'Launch:']) || d.goals.metrics,
+        launchCriteria: extract(text, ['Launch Criteria:', 'Launch:']) || d.goals.launchCriteria,
+      }}));
+    } else if (section === 'users') {
+      setDoc(d => ({ ...d, users: {
+        primaryPersona:   extract(text, 'Primary Persona:', ['Secondary Persona:', 'Key Scenarios:', 'Scenarios:']) || d.users.primaryPersona,
+        secondaryPersona: extract(text, 'Secondary Persona:', ['Key Scenarios:', 'Scenarios:']) || d.users.secondaryPersona,
+        scenarios:        extract(text, ['Key Scenarios:', 'Scenarios:']) || d.users.scenarios,
+      }}));
+    } else if (section === 'features') {
+      const parsed = parseAIFeatures(text);
+      if (parsed.length > 0) setDoc(d => ({ ...d, features: parsed }));
+      else setAiError('Could not parse feature list from AI response. Try again or add manually.');
+    }
+  };
+
+  const exportDocxHandler = async () => {
+    try { await runDocxExport(doc); }
+    catch (e) { notify('Export failed: ' + e.message); }
+  };
+
+  const exportMd = () => {
+    const slug = (doc.header.name || 'prd').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    triggerDownload(buildMarkdown(doc), slug + '-prd.md', 'text/markdown');
+  };
+
+  const copyMd = () => {
+    navigator.clipboard.writeText(buildMarkdown(doc))
+      .then(() => notify('Copied to clipboard ✓'))
+      .catch(() => notify('Copy failed — check browser permissions'));
+  };
+
+  const sectionKey = STEPS[step].section;
+  const sectionData = sectionKey === 'features' ? doc.features : doc[sectionKey];
+
+  const stepsWithNav = () => {
+    if (step === 0) return <Step0 data={doc.header} set={setSection('header')} />;
+    if (step === 1) return <Step1 data={doc.problem} set={setSection('problem')} onAI={callAI} aiLoading={aiLoading} />;
+    if (step === 2) return <Step2 data={doc.goals} set={setSection('goals')} onAI={callAI} aiLoading={aiLoading} />;
+    if (step === 3) return <Step3 data={doc.users} set={setSection('users')} onAI={callAI} aiLoading={aiLoading} />;
+    if (step === 4) return <Step4 features={doc.features} setFeatures={v => setDoc(d => ({ ...d, features: typeof v === 'function' ? v(d.features) : v }))} onAI={callAI} aiLoading={aiLoading} />;
+    if (step === 5) return <Step5 data={doc.nonFunctional} set={setSection('nonFunctional')} />;
+    if (step === 6) return <Step6 data={doc.constraints} set={setSection('constraints')} />;
+    if (step === 7) return <Step7 data={doc.timeline} set={setSection('timeline')} />;
+  };
+
+  const ExportBtn = ({ color, icon, onClick, children }) => (
+    <button onClick={onClick} style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: '0.375rem',
+      padding: '0.425rem 0.625rem', background: 'transparent',
+      border: '1px solid #1a1a20', borderRadius: '5px',
+      color, fontSize: '0.72rem', cursor: 'pointer', transition: 'border-color 0.15s',
+    }}
+      onMouseEnter={e => e.currentTarget.style.borderColor = color}
+      onMouseLeave={e => e.currentTarget.style.borderColor = '#1a1a20'}
+    >
+      {icon}
+      {children}
+    </button>
+  );
+
+  return (
+    <div id="shell">
+      {/* ═══ Sidebar ═══════════════════════════════════════════════════════════ */}
+      <aside id="sidebar">
+        <div style={{ padding: '1rem', borderBottom: '1px solid #1a1a20' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', marginBottom: '0.75rem' }}>
+            <div style={{ width: '24px', height: '24px', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.18)', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            </div>
+            <span style={{ fontSize: '0.65rem', color: '#3f3f46', fontFamily: 'Inter' }}>alexbarkus.dev</span>
+          </a>
+          <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '0.875rem', fontWeight: 600, color: '#e4e4e7' }}>PRD Generator</div>
+          <div style={{ fontSize: '0.65rem', color: '#3f3f46', marginTop: '0.125rem', lineHeight: 1.4 }}>Product Requirements Document</div>
+        </div>
+
+        {/* Step nav */}
+        <nav style={{ flex: 1, overflowY: 'auto', padding: '0.5rem 0' }}>
+          {STEPS.map((s, i) => {
+            const active = step === i;
+            const done = stepDone(doc, i);
+            return (
+              <button key={i} onClick={() => setStep(i)} style={{
+                width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.45rem 1rem',
+                background: active ? 'rgba(245,158,11,0.07)' : 'transparent',
+                border: 'none', borderRight: `2px solid ${active ? '#f59e0b' : 'transparent'}`,
+                cursor: 'pointer', transition: 'all 0.12s',
+              }}>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: done ? '#f59e0b' : active ? '#f59e0b' : '#2a2a30', minWidth: '14px' }}>
+                  {done ? '✓' : String(i+1).padStart(2,'0')}
+                </span>
+                <span style={{ fontSize: '0.775rem', color: active ? '#f4f4f5' : done ? '#71717a' : '#52525b', fontWeight: active ? 500 : 400 }}>
+                  {s.label}
+                </span>
+                {s.hasAI && <span style={{ marginLeft: 'auto', fontSize: '0.55rem', color: '#2a2a30' }}>✦</span>}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Export */}
+        <div style={{ padding: '0.75rem 1rem', borderTop: '1px solid #1a1a20' }}>
+          <div style={{ fontSize: '0.6rem', color: '#3f3f46', fontFamily: 'JetBrains Mono', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>EXPORT</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+            <ExportBtn color="#f59e0b" onClick={exportDocxHandler}
+              icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>}>
+              Export .docx
+            </ExportBtn>
+            <ExportBtn color="#818cf8" onClick={exportMd}
+              icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>}>
+              Export .md
+            </ExportBtn>
+            <ExportBtn color="#71717a" onClick={copyMd}
+              icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>}>
+              Copy Markdown
+            </ExportBtn>
+          </div>
+        </div>
+
+        {/* API key */}
+        <div style={{ padding: '0.625rem 1rem', borderTop: '1px solid #1a1a20' }}>
+          <button onClick={() => setShowKey(!showKey)} style={{
+            display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: '100%',
+          }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: apiKey ? '#4ade80' : '#3f3f46', flexShrink: 0 }} />
+            <span style={{ fontSize: '0.65rem', color: '#3f3f46', fontFamily: 'JetBrains Mono' }}>
+              {apiKey ? 'API key set' : 'No API key (AI disabled)'}
+            </span>
+          </button>
+          {showKey && (
+            <div style={{ marginTop: '0.5rem' }}>
+              <input type="password" value={apiKey} onChange={e => saveKey(e.target.value)}
+                placeholder="sk-ant-api…"
+                style={{ width: '100%', padding: '0.35rem 0.5rem', background: '#18181c', border: '1px solid #2a2a30', borderRadius: '5px', color: '#f4f4f5', fontSize: '0.68rem', fontFamily: 'JetBrains Mono, monospace', outline: 'none' }}
+              />
+              <p style={{ fontSize: '0.6rem', color: '#3f3f46', marginTop: '0.25rem', lineHeight: 1.5 }}>
+                Saved to localStorage. Calls go directly to Anthropic.
+              </p>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* ═══ Main ═══════════════════════════════════════════════════════════════ */}
+      <main id="main">
+        {/* Mobile top bar */}
+        <div className="mobile-bar" style={{ padding: '0.625rem 1rem', borderBottom: '1px solid #1a1a20', background: '#0c0c0f', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <span style={{ fontFamily: 'Space Grotesk', fontSize: '0.8rem', fontWeight: 600, color: '#f4f4f5' }}>PRD Generator</span>
+            <span style={{ fontSize: '0.65rem', color: '#52525b', marginLeft: '0.5rem' }}>Step {step+1}/8 — {STEPS[step].label}</span>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {apiKey
+              ? null
+              : <button onClick={() => setShowKey(!showKey)} style={{ fontSize: '0.65rem', color: '#f59e0b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ API key</button>
+            }
+            <button onClick={() => setShowMobilePreview(!showMobilePreview)} style={{ padding: '0.3rem 0.6rem', background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '5px', color: '#f59e0b', fontSize: '0.7rem', cursor: 'pointer' }}>
+              {showMobilePreview ? 'Edit' : 'Preview'}
+            </button>
+          </div>
+        </div>
+
+        {showMobilePreview ? (
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <Preview doc={doc} />
+          </div>
+        ) : (
+          <div id="form-area">
+            {/* Step heading */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: '#2a2a30' }}>{String(step+1).padStart(2,'0')}/{String(STEPS.length).padStart(2,'0')}</span>
+                <div style={{ flex: 1, height: '1px', background: '#1a1a20' }} />
+                {STEPS[step].hasAI && <span style={{ fontSize: '0.6rem', color: '#2a2a30' }}>✦ AI-assisted</span>}
+              </div>
+              <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#f4f4f5' }}>
+                {STEPS[step].label}
+              </h2>
+            </div>
+
+            {/* Error banner */}
+            {aiError && (
+              <div style={{ padding: '0.6rem 0.875rem', background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', borderRadius: '6px', marginBottom: '1.25rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" style={{ flexShrink: 0, marginTop: '0.1rem' }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span style={{ fontSize: '0.775rem', color: '#fca5a5', flex: 1 }}>{aiError}</span>
+                <button onClick={() => setAiError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#52525b', padding: 0, flexShrink: 0, lineHeight: 1 }}>✕</button>
+              </div>
+            )}
+
+            {/* Mobile key input */}
+            {showKey && (
+              <div style={{ padding: '0.75rem', background: '#0f0f12', border: '1px solid #1e1e24', borderRadius: '7px', marginBottom: '1.25rem' }}>
+                <label style={S.label}>Anthropic API Key</label>
+                <input type="password" value={apiKey} onChange={e => saveKey(e.target.value)}
+                  placeholder="sk-ant-api…"
+                  style={{ ...S.input, marginTop: '0.25rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.8rem' }}
+                />
+                <p style={{ fontSize: '0.65rem', color: '#3f3f46', marginTop: '0.35rem', lineHeight: 1.5 }}>
+                  Saved to localStorage only. Calls go directly to Anthropic. Never shared.
+                </p>
+              </div>
+            )}
+
+            {/* Step content */}
+            <div className="fadein" key={step}>
+              {stepsWithNav()}
+            </div>
+
+            {/* Navigation */}
+            <div style={{ display: 'flex', gap: '0.625rem', marginTop: '2rem', paddingTop: '1.25rem', borderTop: '1px solid #1a1a20' }}>
+              {step > 0 && (
+                <button onClick={() => setStep(s => s-1)} style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid #2a2a30', borderRadius: '7px', color: '#71717a', fontSize: '0.875rem', cursor: 'pointer' }}>
+                  ← Back
+                </button>
+              )}
+              {step < STEPS.length - 1 ? (
+                <button onClick={() => setStep(s => s+1)} style={{ marginLeft: 'auto', padding: '0.5rem 1.25rem', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.22)', borderRadius: '7px', color: '#f59e0b', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer' }}>
+                  Next →
+                </button>
+              ) : (
+                <button onClick={exportDocxHandler} style={{ marginLeft: 'auto', padding: '0.5rem 1.25rem', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.28)', borderRadius: '7px', color: '#f59e0b', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>
+                  Export PRD →
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* ═══ Preview ═══════════════════════════════════════════════════════════ */}
+      <aside id="preview">
+        <div style={{ padding: '0.625rem 1rem', borderBottom: '1px solid #1a1a20', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: '#3f3f46', letterSpacing: '0.08em' }}>LIVE PREVIEW</span>
+          <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#4ade80' }} title="Live" />
+        </div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <Preview doc={doc} />
+        </div>
+      </aside>
+
+      {/* Toast */}
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          padding: '0.45rem 1.125rem', background: '#18181c', border: '1px solid #2a2a30',
+          borderRadius: '999px', color: '#a1a1aa', fontSize: '0.78rem',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.6)', zIndex: 9999, pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+        }}>
+          {toast}
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
