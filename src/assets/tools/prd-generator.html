@@ -52,9 +52,6 @@
     .preview-p { font-size: 0.7875rem; color: #a1a1aa; line-height: 1.65; white-space: pre-line; }
     .preview-placeholder { font-size: 0.75rem; color: #3f3f46; font-style: italic; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.75s linear infinite; }
-
     @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     .fadein { animation: fadein 0.2s ease; }
 
@@ -116,14 +113,14 @@ const { useState, useEffect, useCallback, useRef } = React;
 // ─────────────────────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { label: 'Header',            section: 'header',          hasAI: false },
-  { label: 'Problem',           section: 'problem',         hasAI: true  },
-  { label: 'Goals',             section: 'goals',           hasAI: true  },
-  { label: 'Users',             section: 'users',           hasAI: true  },
-  { label: 'Features',          section: 'features',        hasAI: true  },
-  { label: 'Non-Functional',    section: 'nonFunctional',   hasAI: false },
-  { label: 'Constraints',       section: 'constraints',     hasAI: false },
-  { label: 'Timeline',          section: 'timeline',        hasAI: false },
+  { label: 'Header',          section: 'header'        },
+  { label: 'Problem',         section: 'problem'       },
+  { label: 'Goals',           section: 'goals'         },
+  { label: 'Users',           section: 'users'         },
+  { label: 'Features',        section: 'features'      },
+  { label: 'Non-Functional',  section: 'nonFunctional' },
+  { label: 'Constraints',     section: 'constraints'   },
+  { label: 'Timeline',        section: 'timeline'      },
 ];
 
 const PRIORITIES = { M: 'Must Have', S: 'Should Have', C: 'Could Have', W: "Won't Have" };
@@ -142,95 +139,6 @@ const EMPTY_DOC = {
 // ─────────────────────────────────────────────────────────────────────────────
 // Utilities
 // ─────────────────────────────────────────────────────────────────────────────
-
-function extract(text, start, ends) {
-  const sm = Array.isArray(start) ? start : [start];
-  let si = -1;
-  for (const s of sm) {
-    const i = text.indexOf(s);
-    if (i !== -1) { si = i + s.length; break; }
-  }
-  if (si === -1) return '';
-  const em = ends ? (Array.isArray(ends) ? ends : [ends]) : [];
-  let ei = text.length;
-  for (const e of em) {
-    const i = text.indexOf(e, si);
-    if (i !== -1 && i < ei) ei = i;
-  }
-  return text.slice(si, ei).trim();
-}
-
-function parseAIFeatures(text) {
-  return text.split(/---+/).map(block => {
-    const name = extract(block, 'FEATURE:', ['PRIORITY:', 'DESC:', 'STORY:']);
-    const pri  = extract(block, 'PRIORITY:', ['DESC:', 'STORY:', 'FEATURE:']);
-    const desc = extract(block, 'DESC:', ['STORY:', 'FEATURE:', '---']);
-    const story = extract(block, 'STORY:', ['FEATURE:', '---']);
-    if (!name.trim()) return null;
-    const p = pri.trim().charAt(0).toUpperCase();
-    return { id: Date.now() + Math.random(), name: name.trim(), desc: desc.trim(),
-             priority: 'MSCW'.includes(p) ? p : 'S', userStory: story.trim() };
-  }).filter(Boolean);
-}
-
-function buildAIPrompt(section, doc) {
-  const ctx = `Product: "${doc.header.name || 'unnamed'}"
-One-liner: ${doc.header.oneLiner || 'not defined'}
-Problem: ${doc.problem.statement || 'not defined'}
-Audience: ${doc.problem.audience || 'not defined'}`;
-
-  if (section === 'problem') return `${ctx}
-
-Write a concise PRD Problem Statement section for this product. Return exactly three labeled sections:
-
-Problem Statement: [2-3 sentence description of the problem (not a solution), why it matters]
-
-Target Audience: [1-2 sentences on who experiences this problem]
-
-Evidence: [3-4 bullet points of quantitative or qualitative evidence that the problem exists]
-
-Be specific. No preamble.`;
-
-  if (section === 'goals') return `${ctx}
-
-Write a concise PRD Goals & Success Metrics section. Return exactly three labeled sections:
-
-Objectives: [2-3 SMART business goals]
-
-Success Metrics: [3-4 measurable KPIs]
-
-Launch Criteria: [2-3 specific go/no-go gates before shipping]
-
-Be specific. No preamble.`;
-
-  if (section === 'users') return `${ctx}
-
-Write a PRD User Personas section. Return exactly three labeled sections:
-
-Primary Persona: [Name, role, main goal, key frustration, how they use the product — 3-4 sentences]
-
-Secondary Persona: [Name, role, main goal — 2-3 sentences]
-
-Key Scenarios: [2 short user journey narratives, numbered]
-
-No preamble.`;
-
-  if (section === 'features') return `${ctx}
-Objectives: ${doc.goals.objectives || 'not defined'}
-
-Generate 5-7 features for this product. Format EACH feature exactly like this, separated by ---:
-
-FEATURE: [short name]
-PRIORITY: [M, S, C, or W — one letter only]
-DESC: [1-2 sentence description]
-STORY: As a [user], I want [goal] so that [benefit]
-
----
-
-Use MoSCoW: M=Must Have, S=Should Have, C=Could Have, W=Won't Have. No preamble.`;
-
-  return '';
-}
 
 function buildMarkdown(doc) {
   const date = new Date().toISOString().split('T')[0];
@@ -418,24 +326,6 @@ function TA({ label, hint, value, onChange, placeholder, rows = 3 }) {
   );
 }
 
-function AIBtn({ loading, onClick }) {
-  return (
-    <button onClick={onClick} disabled={loading} style={{
-      display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
-      padding: '0.35rem 0.75rem', background: 'rgba(245,158,11,0.07)',
-      border: '1px solid rgba(245,158,11,0.22)', borderRadius: '6px',
-      color: '#f59e0b', fontSize: '0.75rem', fontWeight: 500,
-      cursor: loading ? 'wait' : 'pointer', flexShrink: 0,
-    }}>
-      {loading
-        ? <svg className="spin" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-        : <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l1.9 5.7L20 12l-6.1 3.3L12 21l-1.9-5.7L4 12l6.1-3.3z"/></svg>
-      }
-      {loading ? 'Generating…' : 'AI Suggest'}
-    </button>
-  );
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Step forms
 // ─────────────────────────────────────────────────────────────────────────────
@@ -466,14 +356,11 @@ function Step0({ data, set }) {
   );
 }
 
-function Step1({ data, set, onAI, aiLoading }) {
+function Step1({ data, set }) {
   const u = f => v => set({ ...data, [f]: v });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Describe the problem without referencing the solution</span>
-        <AIBtn loading={aiLoading} onClick={onAI} />
-      </div>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Describe the problem without referencing the solution</span>
       <TA label="Problem Statement" hint="What's wrong? Why does it matter? Not a solution."
         value={data.statement} onChange={u('statement')} rows={4}
         placeholder="Freelancers spend hours each month drafting responses to out-of-scope requests, damaging client relationships and their earnings." />
@@ -487,14 +374,11 @@ function Step1({ data, set, onAI, aiLoading }) {
   );
 }
 
-function Step2({ data, set, onAI, aiLoading }) {
+function Step2({ data, set }) {
   const u = f => v => set({ ...data, [f]: v });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define what success looks like, measurably</span>
-        <AIBtn loading={aiLoading} onClick={onAI} />
-      </div>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define what success looks like, measurably</span>
       <TA label="Business Objectives" hint="SMART goals — specific, measurable, time-bound"
         value={data.objectives} onChange={u('objectives')} rows={4}
         placeholder="• Reach 500 MAU within 6 months of launch&#10;• Achieve NPS ≥ 40 by end of Q3&#10;• Convert 8% of free users to paid within 90 days" />
@@ -508,14 +392,11 @@ function Step2({ data, set, onAI, aiLoading }) {
   );
 }
 
-function Step3({ data, set, onAI, aiLoading }) {
+function Step3({ data, set }) {
   const u = f => v => set({ ...data, [f]: v });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define who you're building for</span>
-        <AIBtn loading={aiLoading} onClick={onAI} />
-      </div>
+      <span style={{ fontSize: '0.8rem', color: '#52525b' }}>Define who you're building for</span>
       <TA label="Primary Persona" hint="Name, role, goal, frustration, how they use the product"
         value={data.primaryPersona} onChange={u('primaryPersona')} rows={5}
         placeholder="Jordan, 32 — Independent UX designer. Juggles 3–4 fixed-price clients. Main frustration: clients expanding scope without acknowledging the cost. Wants a professional way to push back without damaging the relationship." />
@@ -529,28 +410,25 @@ function Step3({ data, set, onAI, aiLoading }) {
   );
 }
 
-function Step4({ features, setFeatures, onAI, aiLoading }) {
+function Step4({ features, setFeatures }) {
   const add = () => setFeatures(fs => [...fs, { id: Date.now() + Math.random(), name: '', desc: '', priority: 'S', userStory: '' }]);
   const upd = (id, field, val) => setFeatures(fs => fs.map(f => f.id === id ? { ...f, [field]: val } : f));
   const del = (id) => setFeatures(fs => fs.filter(f => f.id !== id));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
-        <div>
-          <span style={{ fontSize: '0.8rem', color: '#52525b', display: 'block', marginBottom: '0.4rem' }}>MoSCoW prioritization — add manually or use AI Suggest</span>
-          <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-            {Object.entries(PRIORITIES).map(([k, v]) => (
-              <span key={k} className={`p-${k}`} style={{ padding: '0.1rem 0.45rem', borderRadius: '4px', border: '1px solid', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{k}: {v}</span>
-            ))}
-          </div>
+      <div>
+        <span style={{ fontSize: '0.8rem', color: '#52525b', display: 'block', marginBottom: '0.4rem' }}>Assign MoSCoW priorities as you add features</span>
+        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+          {Object.entries(PRIORITIES).map(([k, v]) => (
+            <span key={k} className={`p-${k}`} style={{ padding: '0.1rem 0.45rem', borderRadius: '4px', border: '1px solid', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{k}: {v}</span>
+          ))}
         </div>
-        <AIBtn loading={aiLoading} onClick={onAI} />
       </div>
 
       {features.length === 0 && (
         <div style={{ padding: '1.75rem', border: '1px dashed #2a2a30', borderRadius: '8px', textAlign: 'center', color: '#3f3f46', fontSize: '0.8rem' }}>
-          No features yet. Add one below or use AI Suggest.
+          No features yet. Use the button below to add them.
         </div>
       )}
 
@@ -782,81 +660,13 @@ function Preview({ doc }) {
 function App() {
   const [step, setStep] = useState(0);
   const [doc, setDoc] = useState(EMPTY_DOC);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('prd_key') || '');
-  const [showKey, setShowKey] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
   const [toast, setToast] = useState('');
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   const notify = msg => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
-  const saveKey = v => { setApiKey(v); localStorage.setItem('prd_key', v); };
-
   const setSection = section => newData =>
     setDoc(d => ({ ...d, [section]: newData }));
-
-  const callAI = async () => {
-    const section = STEPS[step].section;
-    if (!apiKey) { setShowKey(true); setAiError('Enter your Anthropic API key to use AI Suggest.'); return; }
-    setAiLoading(true);
-    setAiError('');
-    try {
-      const prompt = buildAIPrompt(section, doc);
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1400,
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `API error ${res.status}`);
-      }
-
-      const data = await res.json();
-      const text = data.content?.[0]?.text || '';
-      applyAI(section, text);
-      notify('AI suggestion applied ✓');
-    } catch (err) {
-      setAiError(err.message || 'Request failed');
-    }
-    setAiLoading(false);
-  };
-
-  const applyAI = (section, text) => {
-    if (section === 'problem') {
-      setDoc(d => ({ ...d, problem: {
-        statement: extract(text, 'Problem Statement:', ['Target Audience:', 'Evidence:', 'Supporting Evidence:']) || d.problem.statement,
-        audience:  extract(text, 'Target Audience:', ['Evidence:', 'Supporting Evidence:']) || d.problem.audience,
-        evidence:  extract(text, ['Evidence:', 'Supporting Evidence:']) || d.problem.evidence,
-      }}));
-    } else if (section === 'goals') {
-      setDoc(d => ({ ...d, goals: {
-        objectives:     extract(text, 'Objectives:', ['Success Metrics:', 'Metrics:', 'Launch Criteria:']) || d.goals.objectives,
-        metrics:        extract(text, ['Success Metrics:', 'Metrics:'], ['Launch Criteria:', 'Launch:']) || d.goals.metrics,
-        launchCriteria: extract(text, ['Launch Criteria:', 'Launch:']) || d.goals.launchCriteria,
-      }}));
-    } else if (section === 'users') {
-      setDoc(d => ({ ...d, users: {
-        primaryPersona:   extract(text, 'Primary Persona:', ['Secondary Persona:', 'Key Scenarios:', 'Scenarios:']) || d.users.primaryPersona,
-        secondaryPersona: extract(text, 'Secondary Persona:', ['Key Scenarios:', 'Scenarios:']) || d.users.secondaryPersona,
-        scenarios:        extract(text, ['Key Scenarios:', 'Scenarios:']) || d.users.scenarios,
-      }}));
-    } else if (section === 'features') {
-      const parsed = parseAIFeatures(text);
-      if (parsed.length > 0) setDoc(d => ({ ...d, features: parsed }));
-      else setAiError('Could not parse feature list from AI response. Try again or add manually.');
-    }
-  };
 
   const exportDocxHandler = async () => {
     try { await runDocxExport(doc); }
@@ -874,15 +684,12 @@ function App() {
       .catch(() => notify('Copy failed — check browser permissions'));
   };
 
-  const sectionKey = STEPS[step].section;
-  const sectionData = sectionKey === 'features' ? doc.features : doc[sectionKey];
-
   const stepsWithNav = () => {
     if (step === 0) return <Step0 data={doc.header} set={setSection('header')} />;
-    if (step === 1) return <Step1 data={doc.problem} set={setSection('problem')} onAI={callAI} aiLoading={aiLoading} />;
-    if (step === 2) return <Step2 data={doc.goals} set={setSection('goals')} onAI={callAI} aiLoading={aiLoading} />;
-    if (step === 3) return <Step3 data={doc.users} set={setSection('users')} onAI={callAI} aiLoading={aiLoading} />;
-    if (step === 4) return <Step4 features={doc.features} setFeatures={v => setDoc(d => ({ ...d, features: typeof v === 'function' ? v(d.features) : v }))} onAI={callAI} aiLoading={aiLoading} />;
+    if (step === 1) return <Step1 data={doc.problem} set={setSection('problem')} />;
+    if (step === 2) return <Step2 data={doc.goals} set={setSection('goals')} />;
+    if (step === 3) return <Step3 data={doc.users} set={setSection('users')} />;
+    if (step === 4) return <Step4 features={doc.features} setFeatures={v => setDoc(d => ({ ...d, features: typeof v === 'function' ? v(d.features) : v }))} />;
     if (step === 5) return <Step5 data={doc.nonFunctional} set={setSection('nonFunctional')} />;
     if (step === 6) return <Step6 data={doc.constraints} set={setSection('constraints')} />;
     if (step === 7) return <Step7 data={doc.timeline} set={setSection('timeline')} />;
@@ -937,7 +744,6 @@ function App() {
                 <span style={{ fontSize: '0.775rem', color: active ? '#f4f4f5' : done ? '#71717a' : '#52525b', fontWeight: active ? 500 : 400 }}>
                   {s.label}
                 </span>
-                {s.hasAI && <span style={{ marginLeft: 'auto', fontSize: '0.55rem', color: '#2a2a30' }}>✦</span>}
               </button>
             );
           })}
@@ -962,28 +768,6 @@ function App() {
           </div>
         </div>
 
-        {/* API key */}
-        <div style={{ padding: '0.625rem 1rem', borderTop: '1px solid #1a1a20' }}>
-          <button onClick={() => setShowKey(!showKey)} style={{
-            display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: '100%',
-          }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: apiKey ? '#4ade80' : '#3f3f46', flexShrink: 0 }} />
-            <span style={{ fontSize: '0.65rem', color: '#3f3f46', fontFamily: 'JetBrains Mono' }}>
-              {apiKey ? 'API key set' : 'No API key (AI disabled)'}
-            </span>
-          </button>
-          {showKey && (
-            <div style={{ marginTop: '0.5rem' }}>
-              <input type="password" value={apiKey} onChange={e => saveKey(e.target.value)}
-                placeholder="sk-ant-api…"
-                style={{ width: '100%', padding: '0.35rem 0.5rem', background: '#18181c', border: '1px solid #2a2a30', borderRadius: '5px', color: '#f4f4f5', fontSize: '0.68rem', fontFamily: 'JetBrains Mono, monospace', outline: 'none' }}
-              />
-              <p style={{ fontSize: '0.6rem', color: '#3f3f46', marginTop: '0.25rem', lineHeight: 1.5 }}>
-                Saved to localStorage. Calls go directly to Anthropic.
-              </p>
-            </div>
-          )}
-        </div>
       </aside>
 
       {/* ═══ Main ═══════════════════════════════════════════════════════════════ */}
@@ -995,10 +779,6 @@ function App() {
             <span style={{ fontSize: '0.65rem', color: '#52525b', marginLeft: '0.5rem' }}>Step {step+1}/8 — {STEPS[step].label}</span>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            {apiKey
-              ? null
-              : <button onClick={() => setShowKey(!showKey)} style={{ fontSize: '0.65rem', color: '#f59e0b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ API key</button>
-            }
             <button onClick={() => setShowMobilePreview(!showMobilePreview)} style={{ padding: '0.3rem 0.6rem', background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '5px', color: '#f59e0b', fontSize: '0.7rem', cursor: 'pointer' }}>
               {showMobilePreview ? 'Edit' : 'Preview'}
             </button>
@@ -1016,35 +796,11 @@ function App() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                 <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: '#2a2a30' }}>{String(step+1).padStart(2,'0')}/{String(STEPS.length).padStart(2,'0')}</span>
                 <div style={{ flex: 1, height: '1px', background: '#1a1a20' }} />
-                {STEPS[step].hasAI && <span style={{ fontSize: '0.6rem', color: '#2a2a30' }}>✦ AI-assisted</span>}
               </div>
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#f4f4f5' }}>
                 {STEPS[step].label}
               </h2>
             </div>
-
-            {/* Error banner */}
-            {aiError && (
-              <div style={{ padding: '0.6rem 0.875rem', background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', borderRadius: '6px', marginBottom: '1.25rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" style={{ flexShrink: 0, marginTop: '0.1rem' }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span style={{ fontSize: '0.775rem', color: '#fca5a5', flex: 1 }}>{aiError}</span>
-                <button onClick={() => setAiError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#52525b', padding: 0, flexShrink: 0, lineHeight: 1 }}>✕</button>
-              </div>
-            )}
-
-            {/* Mobile key input */}
-            {showKey && (
-              <div style={{ padding: '0.75rem', background: '#0f0f12', border: '1px solid #1e1e24', borderRadius: '7px', marginBottom: '1.25rem' }}>
-                <label style={S.label}>Anthropic API Key</label>
-                <input type="password" value={apiKey} onChange={e => saveKey(e.target.value)}
-                  placeholder="sk-ant-api…"
-                  style={{ ...S.input, marginTop: '0.25rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.8rem' }}
-                />
-                <p style={{ fontSize: '0.65rem', color: '#3f3f46', marginTop: '0.35rem', lineHeight: 1.5 }}>
-                  Saved to localStorage only. Calls go directly to Anthropic. Never shared.
-                </p>
-              </div>
-            )}
 
             {/* Step content */}
             <div className="fadein" key={step}>
