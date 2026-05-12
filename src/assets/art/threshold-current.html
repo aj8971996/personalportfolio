@@ -400,6 +400,20 @@
     }
     @keyframes exp-spin { to { transform: rotate(360deg); } }
 
+    /* ── Back-to-home link (mobile only) ── */
+    .back-home {
+      display: none;
+      font-size: 0.675rem;
+      color: #888;
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 5px;
+    }
+    .back-home:hover { color: #333; }
+    @media (max-width: 767px) {
+      .back-home { display: inline-block; }
+    }
+
     /* ── Mobile toggle button (hidden on desktop) ── */
     .mobile-params-toggle {
       display: none;
@@ -486,6 +500,7 @@
 <div id="sidebar">
   <div class="sidebar-header">
     <div>
+      <a href="/" class="back-home">← alexbarkus.dev</a>
       <div class="sidebar-title">Threshold Current</div>
       <div class="sidebar-sub">Alex Barkus · 2026</div>
     </div>

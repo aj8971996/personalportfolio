@@ -947,9 +947,17 @@ function App() {
       <main id="main">
         {/* Mobile top bar */}
         <div className="mobile-bar" style={{ padding: '0.625rem 1rem', borderBottom: '1px solid #1a1a20', background: '#0c0c0f', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <span style={{ fontFamily: 'Space Grotesk', fontSize: '0.8rem', fontWeight: 600, color: '#f4f4f5' }}>PRD Generator</span>
-            <span style={{ fontSize: '0.65rem', color: '#52525b', marginLeft: '0.5rem' }}>Step {step+1}/8 — {STEPS[step].label}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <a href="/" style={{ display: 'flex', alignItems: 'center', color: '#52525b', textDecoration: 'none', flexShrink: 0, padding: '0.125rem' }}
+              onMouseEnter={e => e.currentTarget.style.color = '#f59e0b'}
+              onMouseLeave={e => e.currentTarget.style.color = '#52525b'}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            </a>
+            <div>
+              <span style={{ fontFamily: 'Space Grotesk', fontSize: '0.8rem', fontWeight: 600, color: '#f4f4f5' }}>PRD Generator</span>
+              <span style={{ fontSize: '0.65rem', color: '#52525b', marginLeft: '0.5rem' }}>Step {step+1}/8 — {STEPS[step].label}</span>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <button onClick={() => setShowMobilePreview(!showMobilePreview)} style={{ padding: '0.3rem 0.6rem', background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '5px', color: '#f59e0b', fontSize: '0.7rem', cursor: 'pointer' }}>
