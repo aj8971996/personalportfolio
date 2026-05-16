@@ -1,111 +1,70 @@
-# Angular Resume Application
+# Alex Barkus — Personal Portfolio
 
-A professional resume web application built with Angular, featuring download options for ATS-optimized resume formats.
+Angular 19 portfolio site for [alexbarkus.dev](https://alexbarkus.dev). Showcases case studies, tools, algorithmic art, and a downloadable resume.
 
-## Overview
+## Tech Stack
 
-This Angular application provides an interactive online resume with a modern, responsive design.
-
-**ATS-Friendly Resume** - A clean, optimized PDF designed to pass through Applicant Tracking Systems
-
-## Features
-
-- Interactive web-based resume with responsive design
-- Professional styling with Tailwind CSS
-- Experience, skills, education, and project sections
-- ATS-optimized resume format for job applications
-- Loading indicator for user feedback during PDF generation
+- Angular 19, TypeScript, Tailwind CSS
+- jsPDF + html2canvas for PDF/image export
+- Hosted on GitHub Pages (custom domain via CNAME)
 
 ## Project Structure
 
-Key components include:
+```
+src/
+  app/
+    features/       # Page-level components (home, resume, approach, my-services)
+    layout/         # Header, footer, navigation
+    core/services/  # GitHub, resume, skills services
+  assets/
+    art/            # Standalone HTML pages for algorithmic art pieces
+    images/         # Case study screenshots
+    tools/          # Standalone HTML pages for browser-based tools
+  index.html
+  styles.scss
 
-- `resume.component.ts` - Main resume component with download functionality
-- `resume.component.html` - Resume template with content sections
-- `resume-download.service.ts` - Service for PDF generation and download options
+public/             # Static files copied to root of build output
+  CNAME             # Custom domain for GitHub Pages
+  favicon.ico
+  .nojekyll         # Prevents GitHub Pages from running Jekyll
 
-## Technologies Used
+docs/               # Build output — committed to main, deployed to gh-pages
+```
 
-- Angular
-- TypeScript
-- Tailwind CSS
-- html2canvas
-- jsPDF
+## Development
 
-## Getting Started
+```bash
+npm install
+npm start           # ng serve → http://localhost:4200
+```
 
-### Prerequisites
+## Deployment
 
-- Node.js and npm installed
-- Angular CLI installed
+The live site is served from the **`gh-pages` branch** (configured in GitHub Pages settings).
 
-### Installation
+### Workflow
 
-1. Clone the repository
-   ```bash
-   git clone [url-here]
-   cd personalportfolio
-   ```
+1. Make changes in `src/`
+2. Build: `npm run build` — outputs to `docs/`
+3. Commit `docs/` to `main`: `git add docs/ && git commit -m "build: update production build"`
+4. Deploy to gh-pages: `npm run deploy` — pushes `docs/` contents to the `gh-pages` branch
+5. Push main: `git push`
 
-2. Install dependencies
-   ```bash
-   npm install
-   ```
+> **Note:** Always run `npm run build` before `npm run deploy`. The deploy command re-runs the build internally, but committing `docs/` first keeps `main` in sync with what's live.
 
-3. Start the development server
-   ```bash
-   ng serve
-   ```
+### Static Asset Pages (`src/assets/`)
 
-4. Navigate to `http://localhost:4200/` in your browser
+Tools and art pieces are **standalone HTML files** (no Angular routing). They live in `src/assets/` and are copied as-is into `docs/assets/` during build.
 
-## How It Works
+- Accessed at: `alexbarkus.dev/assets/tools/prd-generator.html`
+- Linked from Angular components via `<a href="/assets/tools/...">` 
+- To add a new tool or art piece: drop an HTML file in the appropriate subfolder and link to it.
 
-### Resume Display
+## Scripts
 
-The application uses Angular components to render a professional resume with sections for:
-- Professional summary
-- Work experience
-- Technical skills
-- Education and certifications
-- Project showcases
-- Contact information
-
-### PDF Generation
-
-The application offers two PDF download options:
-
-#### ATS-Friendly Resume PDF
-- Generates a simplified resume with optimal formatting for ATS systems
-- Uses clean typography, clear section headers, and keyword-friendly structure
-- Ensures resume content will pass through automated filters during job applications
-
-## Customization
-
-### Content Customization
-
-To update your resume content:
-1. Edit the `resume.component.html` file to update your information
-2. Update the ATS template HTML in the `getATSFriendlyResumeHTML()` method in `resume-download.service.ts`
-
-### Styling Customization
-
-- Style changes for the web view can be made in the Tailwind classes in `resume.component.html`
-- ATS resume styling can be modified in the inline CSS within the `getATSFriendlyResumeHTML()` method
-
-## Browser Compatibility
-
-The application has been tested and works in:
-- Chrome
-- Firefox
-- Edge
-- Safari
-
-## Author
-
-Alexander Barkus
-
-## Acknowledgments
-
-- Tailwind CSS for the UI framework
-- html2canvas and jsPDF for PDF generation capabilities
+| Command | Description |
+|---|---|
+| `npm start` | Dev server at localhost:4200 |
+| `npm run build` | Production build → `docs/` |
+| `npm run deploy` | Build + push to `gh-pages` branch |
+| `npm test` | Unit tests |
