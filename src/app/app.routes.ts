@@ -23,6 +23,14 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'portfolio/treasury-analysis',
+    loadComponent: () =>
+      import('./features/treasury/treasury-dashboard.component').then(
+        m => m.TreasuryDashboardComponent,
+      ),
+    title: 'Treasury & Real Estate Intelligence — Alex Barkus',
+  },
+  {
     path: '**',
     redirectTo: ''
   }

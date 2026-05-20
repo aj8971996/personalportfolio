@@ -202,6 +202,54 @@
       </div>
     </div>
 
+    <!-- Case Study: Treasury Dashboard -->
+    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 3">
+      <div class="case-header-row">
+        <button class="case-trigger" (click)="toggleCase(3)" [attr.aria-expanded]="expandedCase === 3">
+          <div class="case-trigger-left">
+            <div class="case-company">Portfolio Work Sample · Data Analysis</div>
+            <h3 class="case-title">Corporate Real Estate &amp; Operations Intelligence Dashboard</h3>
+            <div class="case-meta">Treasury &amp; Real Estate Analyst II/III Target · 2026 · Angular + Chart.js + GSA Public Data</div>
+          </div>
+          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="case-header-actions">
+          <div class="case-outcome-badge">5-panel live dashboard</div>
+          <a routerLink="/portfolio/treasury-analysis" class="btn-live">
+            Open Dashboard
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="case-body" [class.case-body-open]="expandedCase === 3">
+        <div class="case-body-inner">
+          <p class="case-context">
+            An interactive analytics dashboard simulating the daily work of a Treasury and Real Estate
+            analytics team. Built on the GSA Federal Real Property Profile (FY2023), a public domain
+            dataset of ~270,000 federal assets, used as a proxy for a corporate portfolio.
+          </p>
+
+          <ul class="case-bullets">
+            <li>Portfolio utilization analysis: state-level benchmarking with color-banded status indicators (green ≥80%, amber 60–79%, red &lt;60%), matching the federal USE IT Act threshold applied as a corporate review standard</li>
+            <li>Cost intelligence: annual cost per square foot by business unit, with owned vs. leased toggle — rent cost for leased assets, facility maintenance cost for owned, supporting the lease-vs-own decision framework</li>
+            <li>Predictive flagging: bottom-20 underperforming assets with 2-period linear trend extrapolation, risk-banded (critical/review/monitor), and CSV export — mirrors automated report delivery in production environments</li>
+            <li>T&amp;E anomaly detection: rolling 6-month baseline with 1.5σ spike markers across Travel, Meals, Lodging, and Fleet categories over 24 months of synthetic expense data</li>
+            <li>Methodology note references production integration points (Workday, Coupa, Snowflake) to contextualize how the same analytical patterns would connect to a real corporate data stack</li>
+          </ul>
+
+          <div class="case-stack">
+            @for (t of ['Angular 19', 'TypeScript', 'Chart.js', 'Tailwind CSS', 'Linear Regression', 'GSA FRPP Data', 'Anomaly Detection', 'CSV Export']; track t) {
+              <span class="tech-badge">{{ t }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Case Study 1: Sphere -->
     <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 1">
       <button class="case-trigger" (click)="toggleCase(1)" [attr.aria-expanded]="expandedCase === 1">
