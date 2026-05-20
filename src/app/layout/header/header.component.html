@@ -14,14 +14,47 @@
       <a routerLink="/approach"
          routerLinkActive="nav-active"
          class="nav-link">Approach</a>
-      <a href="/assets/art/threshold-current.html"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="nav-art">Play With Algorithmic Art ↗</a>
-      <a href="/assets/tools/prd-generator.html"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="nav-tool">PRD Generator ↗</a>
+
+      <!-- Dashboard Samples dropdown -->
+      <div class="nav-dropdown-wrapper" [class.open]="openDropdown === 'dashboards'">
+        <button class="nav-dropdown-trigger" (click)="toggleDropdown('dashboards')" [class.active]="openDropdown === 'dashboards'">
+          Dashboard Samples
+          <svg class="chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a routerLink="/portfolio/treasury-analysis" class="nav-dropdown-item" (click)="openDropdown = null">
+            <span class="dropdown-item-label">Corporate Real Estate &amp; Ops Intelligence</span>
+            <span class="dropdown-item-sub">Treasury analytics · utilization · T&amp;E anomaly detection</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tools dropdown -->
+      <div class="nav-dropdown-wrapper" [class.open]="openDropdown === 'tools'">
+        <button class="nav-dropdown-trigger" (click)="toggleDropdown('tools')" [class.active]="openDropdown === 'tools'">
+          Tools
+          <svg class="chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="/assets/tools/prd-generator.html"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="nav-dropdown-item"
+             (click)="openDropdown = null">
+            <span class="dropdown-item-label">PRD Generator ↗</span>
+            <span class="dropdown-item-sub">AI-powered requirements doc tool</span>
+          </a>
+          <a href="/assets/art/threshold-current.html"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="nav-dropdown-item"
+             (click)="openDropdown = null">
+            <span class="dropdown-item-label">Algorithmic Art ↗</span>
+            <span class="dropdown-item-sub">Interactive generative visualization</span>
+          </a>
+        </div>
+      </div>
+
       <a routerLink="/resume" class="nav-resume">Resume →</a>
     </nav>
 
@@ -52,16 +85,44 @@
          routerLinkActive="nav-active"
          class="mobile-nav-link"
          (click)="closeMenu()">Approach</a>
-      <a href="/assets/art/threshold-current.html"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="mobile-nav-link mobile-art"
-         (click)="closeMenu()">Play With Algorithmic Art ↗</a>
-      <a href="/assets/tools/prd-generator.html"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="mobile-nav-link mobile-tool"
-         (click)="closeMenu()">PRD Generator ↗</a>
+
+      <!-- Dashboard Samples accordion -->
+      <div class="mobile-accordion">
+        <button class="mobile-accordion-trigger" (click)="toggleMobileExpand('dashboards')" [class.expanded]="mobileExpanded === 'dashboards'">
+          Dashboard Samples
+          <svg class="accordion-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        @if (mobileExpanded === 'dashboards') {
+          <div class="mobile-accordion-content">
+            <a routerLink="/portfolio/treasury-analysis" class="mobile-accordion-item" (click)="closeMenu()">
+              Corporate Real Estate &amp; Ops Intelligence
+            </a>
+          </div>
+        }
+      </div>
+
+      <!-- Tools accordion -->
+      <div class="mobile-accordion">
+        <button class="mobile-accordion-trigger" (click)="toggleMobileExpand('tools')" [class.expanded]="mobileExpanded === 'tools'">
+          Tools
+          <svg class="accordion-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        @if (mobileExpanded === 'tools') {
+          <div class="mobile-accordion-content">
+            <a href="/assets/tools/prd-generator.html"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="mobile-accordion-item"
+               (click)="closeMenu()">PRD Generator ↗</a>
+            <a href="/assets/art/threshold-current.html"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="mobile-accordion-item"
+               (click)="closeMenu()">Algorithmic Art ↗</a>
+          </div>
+        }
+      </div>
+
       <a routerLink="/resume"
          class="mobile-nav-link mobile-resume"
          (click)="closeMenu()">Resume →</a>
