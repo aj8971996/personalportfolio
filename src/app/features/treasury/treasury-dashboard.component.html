@@ -188,10 +188,12 @@
           <h2 class="panel-title">Predictive Utilization Flags</h2>
           <p class="panel-caption">Bottom 20 assets by current utilization. Trend: 2-period linear extrapolation. In production: connects to Workday / Coupa via Snowflake.</p>
         </div>
-        <button class="export-btn" (click)="exportCSV()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export CSV
-        </button>
+        <a href="https://catalog.data.gov/dataset/fy23-federal-real-property-profile-frpp-public-dataset"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="source-link">
+          FRPP source data ↗
+        </a>
       </div>
 
       <div class="table-wrapper">
@@ -301,7 +303,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">T&amp;E Spend Anomaly Detection</h2>
-            <p class="panel-caption">Monthly spend by category · Jan 2023 – Dec 2024. Red markers = months exceeding 1.5σ above 6-month rolling baseline.</p>
+            <p class="panel-caption">Monthly spend by category · Jan 2023 – Dec 2024. Red markers = months exceeding 1.5σ above 6-month rolling baseline. Synthetic data generated to demonstrate anomaly detection logic.</p>
           </div>
           <div class="toggle-group">
             @for (cat of teCategories; track cat) {

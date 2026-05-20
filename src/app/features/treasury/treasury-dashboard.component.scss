@@ -426,22 +426,17 @@
 .legend-leased { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
 
 /* ── Predictive Table ───────────────────────────────────────── */
-.export-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.35rem 0.85rem;
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  cursor: pointer;
+.source-link {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-bright);
+  text-decoration: none;
   white-space: nowrap;
-  transition: color 0.2s, border-color 0.2s;
   flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
 
-  &:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
+  &:hover { opacity: 1; text-decoration: underline; }
 }
 
 .table-wrapper {

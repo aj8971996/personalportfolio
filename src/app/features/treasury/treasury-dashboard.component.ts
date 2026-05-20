@@ -156,16 +156,20 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
     }, 50);
   }
 
-  // Called on every tab switch — inits the chart if not yet created
+  // Destroy and reinit on every tab visit — @if removes the canvas from the DOM
+  // when a tab is hidden, so the old Chart instance references a detached element on return.
   setTab(tab: DashTab): void {
     this.activeTab = tab;
     this.cdr.detectChanges();
     setTimeout(() => {
+      const keyMap: Record<DashTab, string> = { exposure: 'util', cost: 'cost', age: 'scatter', te: 'te' };
+      const key = keyMap[tab];
+      if (this.charts[key]) { this.charts[key].destroy(); delete this.charts[key]; }
       switch (tab) {
-        case 'exposure': if (!this.charts['util'])    this.initUtilizationChart(); break;
-        case 'cost':     if (!this.charts['cost'])    this.initCostChart();        break;
-        case 'age':      if (!this.charts['scatter']) this.initScatterChart();     break;
-        case 'te':       if (!this.charts['te'])      this.initTEChart();          break;
+        case 'exposure': this.initUtilizationChart(); break;
+        case 'cost':     this.initCostChart();        break;
+        case 'age':      this.initScatterChart();     break;
+        case 'te':       this.initTEChart();          break;
       }
     }, 50);
   }
@@ -513,25 +517,4 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   fmtSqft(v: number): string { return formatNumber(v); }
   fmtCurrency(v: number): string { return formatCurrency(v); }
 
-  exportCSV(): void {
-    const headers = [
-      'Installation', 'State', 'Agency', 'Type', 'Sq Ft',
-      'Annual Rent', 'Current Util %', 'Prev Util %', 'Trend', 'Predicted Next %',
-    ];
-    const rows = this.predictiveFlags.map(f => [
-      `"${f.installationName}"`, f.state, f.agencyName, f.assetType,
-      f.squareFeetRentable, f.annualRent,
-      f.currentUtil.toFixed(1), f.prevUtil.toFixed(1),
-      f.trend === 'up' ? 'Improving' : f.trend === 'down' ? 'Declining' : 'Stable',
-      f.predictedNext.toFixed(1),
-    ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'utilization-predictive-flags.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
 }
