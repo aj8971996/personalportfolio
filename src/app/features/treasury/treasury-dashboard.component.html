@@ -34,109 +34,138 @@
     <div class="methodology-drawer">
       <div class="methodology-inner">
         <p>
-          This dashboard uses the <strong>GSA Federal Real Property Profile (FY2023)</strong>, a public domain
-          dataset covering ~270,000 federal real estate assets, as a proxy for a corporate real estate
-          portfolio. The analytical patterns demonstrated — utilization benchmarking, cost-per-sqft analysis,
-          lease vs. owned comparisons, and predictive flagging — mirror the core responsibilities of a
-          Treasury and Real Estate analytics team.
+          This dashboard is organized around 4 questions a Treasury and Real Estate team would ask in a quarterly
+          portfolio review. Each tab answers one question with only the data that serves it — no competing context.
         </p>
         <p>
-          <strong>Predictive methodology:</strong> 2-period linear trend extrapolation applied to
-          utilization rate (current vs. simulated prior-year). Assets below 60% are flagged under the
-          federal USE IT Act benchmark.
+          <strong>Tab 1 groups 3 things on purpose.</strong> KPIs, state utilization, and predictive flags all
+          answer "where are we exposed?" Together they complete the picture: KPIs give scale, the bar chart gives
+          geography, the flags table gives the specific assets that need a decision. Separately, they're just charts.
         </p>
         <p>
-          In a production environment, this analysis would connect to <strong>Workday, Coupa, and
-          Snowflake</strong> as data sources, with automated refresh and threshold-breach alerting.
+          <strong>Tab 4 is separated deliberately.</strong> T&amp;E data comes from a different source — synthetic
+          travel records rather than FRPP real estate data. Keeping it on its own tab signals that this is a distinct
+          analytical lens, not an extension of the portfolio view.
+        </p>
+        <p>
+          <strong>Predictive methodology:</strong> 2-period linear trend extrapolation on utilization rate. The
+          60% threshold is sourced from OMB M-25-25 (USE IT Act, April 2025), applied here as a corporate
+          portfolio review benchmark.
+        </p>
+        <p>
+          <strong>Anomaly detection:</strong> 1.5σ rolling 6-month window applied to monthly T&amp;E spend by category.
+          Months exceeding the threshold are marked as anomalies worth investigation.
+        </p>
+        <p>
+          In production, this connects to <strong>Workday, Coupa, and Snowflake</strong> with automated refresh
+          and threshold-breach alerting.
         </p>
       </div>
     </div>
   }
 
-  <!-- ═══ FILTER BAR ══════════════════════════════════════════ -->
-  <div class="filter-bar">
-    <div class="filter-bar-inner">
-
-      <div class="filter-group">
-        <label class="filter-label">State</label>
-        <select class="filter-select" [(ngModel)]="selectedState" (ngModelChange)="applyFilters()">
-          <option value="All">All States</option>
-          @for (s of stateOptions; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-label">Asset Type</label>
-        <div class="toggle-group">
-          @for (t of assetTypes; track t) {
-            <button class="toggle-btn" [class.active]="assetTypeFilter === t"
-              (click)="assetTypeFilter = t; applyFilters()">{{ t }}</button>
-          }
-        </div>
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-label">Ownership</label>
-        <div class="toggle-group">
-          @for (o of ownershipOptions; track o) {
-            <button class="toggle-btn" [class.active]="ownershipFilter === o"
-              (click)="ownershipFilter = o; applyFilters()">{{ o }}</button>
-          }
-        </div>
-      </div>
-
-      @if (selectedState !== 'All' || assetTypeFilter !== 'All' || ownershipFilter !== 'All') {
-        <button class="reset-btn" (click)="resetFilters()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Reset
+  <!-- ═══ TAB NAVIGATION ═══════════════════════════════════════ -->
+  <div class="tab-nav">
+    <div class="tab-nav-inner">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === tab.id"
+          (click)="setTab(tab.id)">
+          {{ tab.question }}
         </button>
       }
-
     </div>
   </div>
 
-  <!-- ═══ KPI CARDS ═══════════════════════════════════════════ -->
-  <div class="kpi-row">
-    <div class="kpi-inner">
+  <!-- ═══ FILTER BAR (FRPP tabs only) ══════════════════════════ -->
+  @if (activeTab !== 'te') {
+    <div class="filter-bar">
+      <div class="filter-bar-inner">
 
-      <div class="kpi-card">
-        <span class="kpi-label">Total Assets Analyzed</span>
-        <span class="kpi-value">{{ fmtSqft(kpis.totalAssets) }}</span>
-        <span class="kpi-sub">Active assets in view</span>
-      </div>
-
-      <div class="kpi-card" [class.kpi-warn]="kpis.avgUtilization < 60" [class.kpi-ok]="kpis.avgUtilization >= 80">
-        <span class="kpi-label">Avg Utilization Rate</span>
-        <span class="kpi-value">{{ fmtPct(kpis.avgUtilization) }}</span>
-        <span class="kpi-sub">USE IT Act benchmark: 60%</span>
-      </div>
-
-      <div class="kpi-card" [class.kpi-danger]="kpis.flaggedCount > 0">
-        <span class="kpi-label">Flagged for Review</span>
-        <span class="kpi-value">{{ kpis.flaggedCount }}</span>
-        <span class="kpi-sub">Below 60% utilization threshold</span>
-      </div>
-
-      <div class="kpi-card">
-        <span class="kpi-label">Lease vs. Owned</span>
-        <div class="kpi-ratio-row">
-          <span class="kpi-value kpi-value-sm">{{ fmtPct(kpis.leasedPct) }}</span>
-          <span class="kpi-ratio-sep">/</span>
-          <span class="kpi-value kpi-value-sm kpi-owned">{{ fmtPct(kpis.ownedPct) }}</span>
+        <div class="filter-group">
+          <label class="filter-label">State</label>
+          <select class="filter-select" [(ngModel)]="selectedState" (ngModelChange)="applyFilters()">
+            <option value="All">All States</option>
+            @for (s of stateOptions; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
         </div>
-        <span class="kpi-sub">Leased / Owned</span>
+
+        <div class="filter-group">
+          <label class="filter-label">Asset Type</label>
+          <div class="toggle-group">
+            @for (t of assetTypes; track t) {
+              <button class="toggle-btn" [class.active]="assetTypeFilter === t"
+                (click)="assetTypeFilter = t; applyFilters()">{{ t }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Ownership</label>
+          <div class="toggle-group">
+            @for (o of ownershipOptions; track o) {
+              <button class="toggle-btn" [class.active]="ownershipFilter === o"
+                (click)="ownershipFilter = o; applyFilters()">{{ o }}</button>
+            }
+          </div>
+        </div>
+
+        @if (selectedState !== 'All' || assetTypeFilter !== 'All' || ownershipFilter !== 'All') {
+          <button class="reset-btn" (click)="resetFilters()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Reset
+          </button>
+        }
+
       </div>
-
     </div>
-  </div>
+  }
 
-  <!-- ═══ PANEL GRID (2-col) ══════════════════════════════════ -->
-  <div class="panel-grid">
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB 1 — Where are we exposed?
+  ════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'exposure') {
 
-    <!-- Panel 1: Utilization by State -->
-    <div class="dash-panel">
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+      <div class="kpi-inner">
+
+        <div class="kpi-card">
+          <span class="kpi-label">Total Assets Analyzed</span>
+          <span class="kpi-value">{{ fmtSqft(kpis.totalAssets) }}</span>
+          <span class="kpi-sub">Active assets in view</span>
+        </div>
+
+        <div class="kpi-card" [class.kpi-warn]="kpis.avgUtilization < 60" [class.kpi-ok]="kpis.avgUtilization >= 80">
+          <span class="kpi-label">Avg Utilization Rate</span>
+          <span class="kpi-value">{{ fmtPct(kpis.avgUtilization) }}</span>
+          <span class="kpi-sub">USE IT Act benchmark: 60%</span>
+        </div>
+
+        <div class="kpi-card" [class.kpi-danger]="kpis.flaggedCount > 0">
+          <span class="kpi-label">Flagged for Review</span>
+          <span class="kpi-value">{{ kpis.flaggedCount }}</span>
+          <span class="kpi-sub">Below 60% utilization threshold</span>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-label">Lease vs. Owned</span>
+          <div class="kpi-ratio-row">
+            <span class="kpi-value kpi-value-sm">{{ fmtPct(kpis.leasedPct) }}</span>
+            <span class="kpi-ratio-sep">/</span>
+            <span class="kpi-value kpi-value-sm kpi-owned">{{ fmtPct(kpis.ownedPct) }}</span>
+          </div>
+          <span class="kpi-sub">Leased / Owned</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Utilization by State -->
+    <div class="dash-panel dash-panel-full">
       <div class="panel-header">
         <div>
           <h2 class="panel-title">Utilization by State</h2>
@@ -146,133 +175,151 @@
           <span class="active-filter-badge">{{ selectedState }} <button (click)="onStateSelect(selectedState)" aria-label="Clear state filter">×</button></span>
         }
       </div>
-      <div class="chart-container chart-tall">
+      <div class="chart-container chart-state">
         <canvas #utilizationChart></canvas>
       </div>
       <p class="panel-note">Assets below 60% are flagged under the federal USE IT Act benchmark — applied here as a corporate portfolio review threshold.</p>
     </div>
 
-    <!-- Panel 2: Cost per Sq Ft -->
-    <div class="dash-panel">
+    <!-- Predictive Flags Table -->
+    <div class="dash-panel dash-panel-full">
       <div class="panel-header">
         <div>
-          <h2 class="panel-title">Annual Cost / Sq Ft by Business Unit</h2>
-          <p class="panel-caption">Leased: annual rent. Owned: facility maintenance cost. Top 15 units.</p>
+          <h2 class="panel-title">Predictive Utilization Flags</h2>
+          <p class="panel-caption">Bottom 20 assets by current utilization. Trend: 2-period linear extrapolation. In production: connects to Workday / Coupa via Snowflake.</p>
         </div>
-        <div class="toggle-group">
-          @for (o of ownershipOptions; track o) {
-            <button class="toggle-btn toggle-btn-sm" [class.active]="costOwnership === o"
-              (click)="onCostOwnershipChange(o)">{{ o }}</button>
-          }
-        </div>
+        <button class="export-btn" (click)="exportCSV()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
       </div>
-      <div class="chart-container chart-tall">
-        <canvas #costChart></canvas>
-      </div>
-    </div>
 
-  </div>
-
-  <!-- Panel 3: Age vs Utilization Scatter -->
-  <div class="dash-panel dash-panel-full">
-    <div class="panel-header">
-      <div>
-        <h2 class="panel-title">Asset Age vs. Utilization</h2>
-        <p class="panel-caption">Bubble size proportional to rentable square footage. Dashed line: linear trend. Older assets cluster at lower utilization — a key driver of portfolio consolidation decisions.</p>
-      </div>
-      <div class="legend-chips">
-        <span class="legend-chip legend-owned">Owned</span>
-        <span class="legend-chip legend-leased">Leased</span>
-      </div>
-    </div>
-    <div class="chart-container chart-scatter">
-      <canvas #scatterChart></canvas>
-    </div>
-  </div>
-
-  <!-- Panel 4: Predictive Flags Table -->
-  <div class="dash-panel dash-panel-full">
-    <div class="panel-header">
-      <div>
-        <h2 class="panel-title">Predictive Utilization Flags</h2>
-        <p class="panel-caption">Bottom 20 assets by current utilization. Trend: 2-period linear extrapolation on utilization rate. In production: connects to Workday / Coupa via Snowflake.</p>
-      </div>
-      <button class="export-btn" (click)="exportCSV()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export CSV
-      </button>
-    </div>
-
-    <div class="table-wrapper">
-      <table class="flags-table">
-        <thead>
-          <tr>
-            <th>Installation</th>
-            <th>State</th>
-            <th>Agency</th>
-            <th>Type</th>
-            <th class="num-col">Sq Ft</th>
-            <th class="num-col">Annual Rent</th>
-            <th class="num-col">Current Util</th>
-            <th class="num-col">Trend</th>
-            <th class="num-col">Predicted</th>
-            <th>Risk</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (f of predictiveFlags; track f.installationName) {
-            <tr [class.row-critical]="f.predictedNext < 40" [class.row-warning]="f.predictedNext >= 40 && f.predictedNext < 60">
-              <td class="install-name">{{ f.installationName }}</td>
-              <td><span class="state-tag">{{ f.state }}</span></td>
-              <td class="agency-cell">{{ f.agencyName }}</td>
-              <td>{{ f.assetType }}</td>
-              <td class="num-col">{{ fmtSqft(f.squareFeetRentable) }}</td>
-              <td class="num-col">{{ f.annualRent > 0 ? fmtCurrency(f.annualRent) : '—' }}</td>
-              <td class="num-col util-val" [class.util-low]="f.currentUtil < 60">{{ fmtPct(f.currentUtil) }}</td>
-              <td class="num-col">
-                <span class="trend-badge" [class]="trendClass(f.trend)">{{ trendIcon(f.trend) }} {{ f.trend }}</span>
-              </td>
-              <td class="num-col">
-                <span class="predicted-val" [class]="predictedClass(f.predictedNext)">{{ fmtPct(f.predictedNext) }}</span>
-              </td>
-              <td>
-                @if (f.predictedNext < 40) {
-                  <span class="risk-badge risk-critical">Critical</span>
-                } @else if (f.predictedNext < 60) {
-                  <span class="risk-badge risk-warning">Review</span>
-                } @else {
-                  <span class="risk-badge risk-ok">Monitor</span>
-                }
-              </td>
+      <div class="table-wrapper">
+        <table class="flags-table">
+          <thead>
+            <tr>
+              <th>Installation</th>
+              <th>State</th>
+              <th>Agency</th>
+              <th>Type</th>
+              <th class="num-col">Sq Ft</th>
+              <th class="num-col">Annual Rent</th>
+              <th class="num-col">Current Util</th>
+              <th class="num-col">Trend</th>
+              <th class="num-col">Predicted</th>
+              <th>Risk</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (f of predictiveFlags; track f.installationName) {
+              <tr [class.row-critical]="f.predictedNext < 40" [class.row-warning]="f.predictedNext >= 40 && f.predictedNext < 60">
+                <td class="install-name">{{ f.installationName }}</td>
+                <td><span class="state-tag">{{ f.state }}</span></td>
+                <td class="agency-cell">{{ f.agencyName }}</td>
+                <td>{{ f.assetType }}</td>
+                <td class="num-col">{{ fmtSqft(f.squareFeetRentable) }}</td>
+                <td class="num-col">{{ f.annualRent > 0 ? fmtCurrency(f.annualRent) : '—' }}</td>
+                <td class="num-col util-val" [class.util-low]="f.currentUtil < 60">{{ fmtPct(f.currentUtil) }}</td>
+                <td class="num-col">
+                  <span class="trend-badge" [class]="trendClass(f.trend)">{{ trendIcon(f.trend) }} {{ f.trend }}</span>
+                </td>
+                <td class="num-col">
+                  <span class="predicted-val" [class]="predictedClass(f.predictedNext)">{{ fmtPct(f.predictedNext) }}</span>
+                </td>
+                <td>
+                  @if (f.predictedNext < 40) {
+                    <span class="risk-badge risk-critical">Critical</span>
+                  } @else if (f.predictedNext < 60) {
+                    <span class="risk-badge risk-warning">Review</span>
+                  } @else {
+                    <span class="risk-badge risk-ok">Monitor</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
 
-  <!-- Panel 5: T&E Anomaly Detection -->
-  <div class="dash-panel dash-panel-full">
-    <div class="panel-header">
-      <div>
-        <h2 class="panel-title">T&amp;E Spend Anomaly Detection</h2>
-        <p class="panel-caption">Monthly spend by category · Jan 2023 – Dec 2024. Red markers = months exceeding 1.5σ above 6-month rolling baseline. Mirrors expense reimbursement and travel management oversight.</p>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB 2 — Are we getting value from our space?
+  ════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'cost') {
+    <div class="tab-content">
+      <div class="dash-panel dash-panel-full">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Annual Cost / Sq Ft by Business Unit</h2>
+            <p class="panel-caption">Leased: annual rent. Owned: facility maintenance cost. Top 15 units by cost efficiency.</p>
+          </div>
+          <div class="toggle-group">
+            @for (o of ownershipOptions; track o) {
+              <button class="toggle-btn toggle-btn-sm" [class.active]="costOwnership === o"
+                (click)="onCostOwnershipChange(o)">{{ o }}</button>
+            }
+          </div>
+        </div>
+        <div class="chart-container chart-focus">
+          <canvas #costChart></canvas>
+        </div>
       </div>
-      <div class="toggle-group">
-        @for (cat of teCategories; track cat) {
-          <button class="toggle-btn toggle-btn-sm" [class.active]="teCategory === cat"
-            (click)="onTECategoryChange(cat)">{{ cat }}</button>
-        }
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB 3 — Is our portfolio aging well?
+  ════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'age') {
+    <div class="tab-content">
+      <div class="dash-panel dash-panel-full">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Asset Age vs. Utilization</h2>
+            <p class="panel-caption">Bubble size proportional to rentable sq footage. Dashed line: linear trend. Older assets cluster at lower utilization — the primary driver of portfolio consolidation decisions.</p>
+          </div>
+          <div class="legend-chips">
+            <span class="legend-chip legend-owned">Owned</span>
+            <span class="legend-chip legend-leased">Leased</span>
+          </div>
+        </div>
+        <div class="chart-container chart-focus">
+          <canvas #scatterChart></canvas>
+        </div>
       </div>
     </div>
-    <div class="chart-container chart-medium">
-      <canvas #teChart></canvas>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB 4 — Are travel expenses in control?
+  ════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'te') {
+    <div class="tab-content">
+      <div class="dash-panel dash-panel-full">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">T&amp;E Spend Anomaly Detection</h2>
+            <p class="panel-caption">Monthly spend by category · Jan 2023 – Dec 2024. Red markers = months exceeding 1.5σ above 6-month rolling baseline.</p>
+          </div>
+          <div class="toggle-group">
+            @for (cat of teCategories; track cat) {
+              <button class="toggle-btn toggle-btn-sm" [class.active]="teCategory === cat"
+                (click)="onTECategoryChange(cat)">{{ cat }}</button>
+            }
+          </div>
+        </div>
+        <div class="chart-container chart-focus">
+          <canvas #teChart></canvas>
+        </div>
+        <div class="anomaly-legend">
+          <span class="anomaly-dot"></span>
+          <span class="anomaly-text">Anomaly: spend &gt;1.5σ above 6-month rolling average</span>
+        </div>
+      </div>
     </div>
-    <div class="anomaly-legend">
-      <span class="anomaly-dot"></span>
-      <span class="anomaly-text">Anomaly: spend &gt;1.5σ above 6-month rolling average</span>
-    </div>
-  </div>
+  }
 
   <!-- Footer note -->
   <div class="dash-footer">

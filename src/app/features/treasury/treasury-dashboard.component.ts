@@ -58,6 +58,8 @@ function utilColor(v: number): string {
   return 'rgba(239, 68, 68, 0.8)';
 }
 
+export type DashTab = 'exposure' | 'cost' | 'age' | 'te';
+
 @Component({
   selector: 'app-treasury-dashboard',
   standalone: true,
@@ -81,6 +83,7 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   readonly allTravel: TravelRecord[] = TRAVEL_DATA;
 
   // ── UI state ───────────────────────────────────────────────
+  activeTab: DashTab = 'exposure';
   selectedState = 'All';
   assetTypeFilter: 'All' | 'Building' | 'Land' | 'Structure' = 'All';
   ownershipFilter: 'All' | 'Owned' | 'Leased' = 'All';
@@ -97,6 +100,13 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   predictiveFlags: PredictiveFlag[] = [];
   stateOptions: string[] = [];
   teData!: MonthlyTEData;
+
+  readonly tabs: { id: DashTab; question: string }[] = [
+    { id: 'exposure', question: 'Where are we exposed?' },
+    { id: 'cost',     question: 'Are we getting value from our space?' },
+    { id: 'age',      question: 'Is our portfolio aging well?' },
+    { id: 'te',       question: 'Are travel expenses in control?' },
+  ];
 
   readonly assetTypes: ('All' | 'Building' | 'Land' | 'Structure')[] = ['All', 'Building', 'Land', 'Structure'];
   readonly ownershipOptions: ('All' | 'Owned' | 'Leased')[] = ['All', 'Owned', 'Leased'];
@@ -137,11 +147,26 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
     Object.values(this.charts).forEach((c: Chart) => c.destroy());
   }
 
+  // Only init the active tab's chart on first load (Tab 1 = utilization)
   private doInitCharts(): void {
     setTimeout(() => {
-      this.initCharts();
+      this.initUtilizationChart();
       this.chartsReady = true;
       this.cdr.detectChanges();
+    }, 50);
+  }
+
+  // Called on every tab switch — inits the chart if not yet created
+  setTab(tab: DashTab): void {
+    this.activeTab = tab;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      switch (tab) {
+        case 'exposure': if (!this.charts['util'])    this.initUtilizationChart(); break;
+        case 'cost':     if (!this.charts['cost'])    this.initCostChart();        break;
+        case 'age':      if (!this.charts['scatter']) this.initScatterChart();     break;
+        case 'te':       if (!this.charts['te'])      this.initTEChart();          break;
+      }
     }, 50);
   }
 
@@ -158,6 +183,7 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
     this.predictiveFlags = computePredictiveFlags(this.filteredData);
 
     if (updateCharts && this.chartsReady) {
+      // Update all initialized charts so switching tabs shows current filter state
       this.updateUtilizationChart();
       this.updateCostChart();
       this.updateScatterChart();
@@ -171,13 +197,13 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
 
   onCostOwnershipChange(v: 'All' | 'Owned' | 'Leased'): void {
     this.costOwnership = v;
-    if (this.chartsReady) this.updateCostChart();
+    if (this.charts['cost']) this.updateCostChart();
   }
 
   onTECategoryChange(v: 'All' | 'Travel' | 'Meals' | 'Lodging' | 'Fleet'): void {
     this.teCategory = v;
     this.teData = computeMonthlyTE(this.allTravel, v);
-    if (this.chartsReady) this.updateTEChart();
+    if (this.charts['te']) this.updateTEChart();
   }
 
   resetFilters(): void {
@@ -188,14 +214,8 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   }
 
   // ── Chart init ─────────────────────────────────────────────
-  private initCharts(): void {
-    this.initUtilizationChart();
-    this.initCostChart();
-    this.initScatterChart();
-    this.initTEChart();
-  }
-
   private initUtilizationChart(): void {
+    if (!this.utilizationRef?.nativeElement) return;
     const states = computeStateUtilization(this.filteredData);
     const labels = states.map(s => s.state);
     const values = states.map(s => Math.round(s.avgUtil * 10) / 10);
@@ -246,6 +266,7 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   }
 
   private initCostChart(): void {
+    if (!this.costRef?.nativeElement) return;
     const costs = computeAgencyCost(this.filteredData, this.costOwnership);
 
     this.charts['cost'] = new Chart(this.costRef.nativeElement, {
@@ -289,6 +310,7 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   }
 
   private initScatterChart(): void {
+    if (!this.scatterRef?.nativeElement) return;
     const { owned, leased, trendLine } = computeScatterData(this.filteredData);
 
     this.charts['scatter'] = new Chart(this.scatterRef.nativeElement, {
@@ -356,6 +378,7 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   }
 
   private initTEChart(): void {
+    if (!this.teRef?.nativeElement) return;
     const { labelsFull, series, anomalies } = this.teData;
     const CAT_COLORS: Record<string, string> = {
       Travel: '#6366F1', Meals: '#F59E0B', Lodging: '#06B6D4', Fleet: '#10B981',

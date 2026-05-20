@@ -122,14 +122,65 @@
   strong { color: var(--text-primary); }
 }
 
+/* ── Tab Navigation ─────────────────────────────────────────── */
+.tab-nav {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+}
+
+.tab-nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.tab-btn {
+  position: relative;
+  padding: 0.875rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-bright);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  &:hover { color: var(--text-secondary); }
+
+  &.active {
+    color: var(--text-primary);
+    &::after { transform: scaleX(1); }
+  }
+}
+
 /* ── Filter Bar ─────────────────────────────────────────────── */
 .filter-bar {
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
   padding: 0.875rem 0;
-  position: sticky;
-  top: 64px;
-  z-index: 10;
 }
 
 .filter-bar-inner {
@@ -214,7 +265,7 @@
 }
 
 /* ── KPI Row ────────────────────────────────────────────────── */
-.kpi-row { padding: 1.25rem 0; }
+.kpi-row { padding: 1.25rem 0 0; }
 
 .kpi-inner {
   max-width: 1280px;
@@ -235,8 +286,8 @@
   gap: 0.2rem;
   transition: border-color 0.2s;
 
-  &.kpi-ok  { border-left: 3px solid #10B981; }
-  &.kpi-warn { border-left: 3px solid #F59E0B; }
+  &.kpi-ok    { border-left: 3px solid #10B981; }
+  &.kpi-warn  { border-left: 3px solid #F59E0B; }
   &.kpi-danger { border-left: 3px solid #EF4444; }
 }
 
@@ -277,17 +328,12 @@
   line-height: 1.4;
 }
 
-/* ── Panel layout ───────────────────────────────────────────── */
-.panel-grid {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
+/* ── Tab content wrapper ────────────────────────────────────── */
+.tab-content {
+  padding-top: 1.25rem;
 }
 
+/* ── Panel layout ───────────────────────────────────────────── */
 .dash-panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -297,16 +343,7 @@
 
 .dash-panel-full {
   max-width: 1280px;
-  margin: 0 auto 1rem;
-  padding: 0 1.5rem;
-
-  > .dash-panel { /* panels inside full-width container already wrapped */ }
-}
-
-/* Direct full-width panel (not inside panel-grid) */
-.dash-panel-full.dash-panel {
-  max-width: 1280px;
-  margin: 0 auto 1rem;
+  margin: 1.25rem auto 0;
   padding: 1.25rem 1.5rem;
   border-radius: 12px;
 }
@@ -332,7 +369,7 @@
   font-size: 0.78rem;
   color: var(--text-muted);
   line-height: 1.5;
-  max-width: 480px;
+  max-width: 560px;
 }
 
 .panel-note {
@@ -372,9 +409,8 @@
 
 /* ── Chart Containers ───────────────────────────────────────── */
 .chart-container { position: relative; width: 100%; }
-.chart-tall    { height: 380px; }
-.chart-scatter { height: 320px; }
-.chart-medium  { height: 280px; }
+.chart-state  { height: 320px; }   /* Tab 1 — leaves room for flags table below */
+.chart-focus  { height: 420px; }   /* Tabs 2–4 — full focus, more breathing room */
 
 /* ── Scatter Legend ─────────────────────────────────────────── */
 .legend-chips { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
@@ -555,17 +591,15 @@
 
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .panel-grid { grid-template-columns: 1fr; }
-  .kpi-inner  { grid-template-columns: repeat(2, 1fr); }
+  .kpi-inner { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 639px) {
-  .kpi-inner     { grid-template-columns: 1fr 1fr; }
+  .kpi-inner       { grid-template-columns: 1fr 1fr; }
   .filter-bar-inner { gap: 0.75rem; }
-  .chart-tall    { height: 300px; }
-  .chart-scatter { height: 260px; }
-  .chart-medium  { height: 220px; }
+  .chart-state  { height: 260px; }
+  .chart-focus  { height: 320px; }
 
-  .dash-panel-full.dash-panel { padding: 1rem; }
-  .panel-grid { padding: 0 1rem; }
+  .dash-panel-full { padding: 1rem; margin-top: 0.75rem; }
+  .tab-btn { padding: 0.75rem 0.875rem; font-size: 0.78rem; }
 }
