@@ -76,6 +76,14 @@
   font-size: 0.68rem;
   color: var(--text-muted);
   letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: var(--text-secondary);
+  }
 }
 
 .methodology-btn {
@@ -426,17 +434,22 @@
 .legend-leased { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
 
 /* ── Predictive Table ───────────────────────────────────────── */
-.source-link {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--accent-bright);
-  text-decoration: none;
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.85rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
   white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
   flex-shrink: 0;
-  opacity: 0.8;
-  transition: opacity 0.2s;
 
-  &:hover { opacity: 1; text-decoration: underline; }
+  &:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
 }
 
 .table-wrapper {

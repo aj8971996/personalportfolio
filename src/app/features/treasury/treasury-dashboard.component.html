@@ -17,10 +17,13 @@
         </p>
       </div>
       <div class="dash-meta-row">
-        <span class="data-source-tag">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          {{ dataSource }} · CC0 Public Domain
-        </span>
+        <a class="data-source-tag"
+           href="https://catalog.data.gov/dataset/fy23-federal-real-property-profile-frpp-public-dataset"
+           target="_blank"
+           rel="noopener noreferrer">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          {{ dataSource }} · CC0 Public Domain ↗
+        </a>
         <button class="methodology-btn" (click)="showMethodology = !showMethodology">
           {{ showMethodology ? 'Hide' : 'Methodology' }}
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotate-180]="showMethodology" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -188,12 +191,10 @@
           <h2 class="panel-title">Predictive Utilization Flags</h2>
           <p class="panel-caption">Bottom 20 assets by current utilization. Trend: 2-period linear extrapolation. In production: connects to Workday / Coupa via Snowflake.</p>
         </div>
-        <a href="https://catalog.data.gov/dataset/fy23-federal-real-property-profile-frpp-public-dataset"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="source-link">
-          FRPP source data ↗
-        </a>
+        <button class="export-btn" (click)="exportCSV()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
       </div>
 
       <div class="table-wrapper">

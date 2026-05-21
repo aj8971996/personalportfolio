@@ -517,4 +517,26 @@ export class TreasuryDashboardComponent implements OnInit, AfterViewInit, OnDest
   fmtSqft(v: number): string { return formatNumber(v); }
   fmtCurrency(v: number): string { return formatCurrency(v); }
 
+  exportCSV(): void {
+    const headers = [
+      'Installation', 'State', 'Agency', 'Type', 'Sq Ft',
+      'Annual Rent', 'Current Util %', 'Prev Util %', 'Trend', 'Predicted Next %',
+    ];
+    const rows = this.predictiveFlags.map(f => [
+      `"${f.installationName}"`, f.state, f.agencyName, f.assetType,
+      f.squareFeetRentable, f.annualRent,
+      f.currentUtil.toFixed(1), f.prevUtil.toFixed(1),
+      f.trend === 'up' ? 'Improving' : f.trend === 'down' ? 'Declining' : 'Stable',
+      f.predictedNext.toFixed(1),
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'utilization-predictive-flags.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
 }
