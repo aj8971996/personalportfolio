@@ -309,34 +309,32 @@
 
     <!-- ws-carousel class activates horizontal scroll at 3+ items -->
     <div class="ws-grid">
-      @for (sample of workSamples; track sample.route) {
+      @for (sample of workSamples; track sample.route; let i = $index) {
         <div class="ws-card glass-card-amber reveal">
 
-          <!-- Preview area: swap src into sample.preview to upgrade from placeholder to screenshot -->
+          <!-- Live embed: iframe renders at 2× card width, scaled to 50% so it fills the preview
+               area exactly while giving the dashboard a proper ~1060px desktop viewport.
+               pointer-events on the wrap keeps it view-only; the overlay CTA handles navigation. -->
           <div class="ws-preview">
-            @if (sample.preview) {
-              <img [src]="sample.preview" [alt]="sample.title + ' preview'" class="ws-preview-img" />
-            } @else {
-              <div class="ws-preview-placeholder">
-                <svg class="ws-preview-icon" width="72" height="56" viewBox="0 0 72 56" fill="none" aria-hidden="true">
-                  <rect x="4"  y="36" width="10" height="16" rx="1.5" fill="currentColor" opacity="0.18"/>
-                  <rect x="18" y="24" width="10" height="28" rx="1.5" fill="currentColor" opacity="0.28"/>
-                  <rect x="32" y="14" width="10" height="38" rx="1.5" fill="currentColor" opacity="0.4"/>
-                  <rect x="46" y="26" width="10" height="26" rx="1.5" fill="currentColor" opacity="0.28"/>
-                  <rect x="60" y="32" width="10" height="20" rx="1.5" fill="currentColor" opacity="0.18"/>
-                  <polyline points="9,36 23,24 37,14 51,26 65,32"
-                    stroke="currentColor" stroke-width="1.75"
-                    stroke-linecap="round" stroke-linejoin="round"
-                    fill="none" opacity="0.65"/>
-                  <circle cx="9"  cy="36" r="2"   fill="currentColor" opacity="0.7"/>
-                  <circle cx="23" cy="24" r="2"   fill="currentColor" opacity="0.7"/>
-                  <circle cx="37" cy="14" r="2.5" fill="currentColor"/>
-                  <circle cx="51" cy="26" r="2"   fill="currentColor" opacity="0.7"/>
-                  <circle cx="65" cy="32" r="2"   fill="currentColor" opacity="0.7"/>
+            <div class="ws-iframe-wrap">
+              <iframe
+                [src]="workSampleUrls[i]"
+                loading="lazy"
+                [title]="sample.title + ' — live preview'"
+                scrolling="no"
+                tabindex="-1"
+                aria-hidden="true">
+              </iframe>
+            </div>
+            <div class="ws-preview-overlay" aria-hidden="true">
+              <a [routerLink]="sample.route" class="ws-preview-cta" tabindex="-1">
+                Open full dashboard
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"/>
                 </svg>
-                <span class="ws-data-tag">{{ sample.dataSource }}</span>
-              </div>
-            }
+              </a>
+            </div>
           </div>
 
           <div class="ws-body">

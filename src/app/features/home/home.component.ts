@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -119,7 +120,22 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     else this.bgTick();
   };
 
-  constructor(private el: ElementRef, private ngZone: NgZone) {}
+  private _workSampleUrls?: SafeResourceUrl[];
+
+  get workSampleUrls(): SafeResourceUrl[] {
+    if (!this._workSampleUrls) {
+      this._workSampleUrls = this.workSamples.map(s =>
+        this.sanitizer.bypassSecurityTrustResourceUrl(window.location.origin + s.route)
+      );
+    }
+    return this._workSampleUrls;
+  }
+
+  constructor(
+    private el: ElementRef,
+    private ngZone: NgZone,
+    private sanitizer: DomSanitizer,
+  ) {}
 
   ngOnInit(): void {
     setTimeout(() => this.startTypewriter(), 900);

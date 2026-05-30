@@ -672,65 +672,77 @@
 
 .ws-preview {
   position: relative;
-  aspect-ratio: 16 / 9;
+  height: 380px;
   overflow: hidden;
   background: var(--bg-base);
+  border-radius: var(--radius, 12px) var(--radius, 12px) 0 0;
 }
 
-.ws-preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-}
-
-.ws-preview-placeholder {
+// The wrap is 200% × 200% of the preview container, then scaled to 50%.
+// Net result: the iframe renders at ~2× the card's pixel width (a proper desktop
+// viewport) but visually fills the preview area exactly. No JS measurement needed.
+.ws-iframe-wrap {
   position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse at 65% 35%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 25% 75%, rgba(245, 158, 11, 0.07) 0%, transparent 50%);
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: top left;
+  pointer-events: none;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(99, 102, 241, 0.055) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, 0.055) 1px, transparent 1px);
-    background-size: 28px 28px;
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
   }
 }
 
-.ws-preview-icon {
-  position: relative;
-  z-index: 1;
-  color: var(--accent-bright);
-  opacity: 0.55;
-  margin-bottom: 0.5rem;
+.ws-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 9, 11, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease;
+  pointer-events: none;
+  z-index: 2;
+
+  .ws-card:hover & {
+    background: rgba(9, 9, 11, 0.58);
+    pointer-events: auto;
+  }
 }
 
-.ws-data-tag {
-  position: absolute;
-  bottom: 0.625rem;
-  right: 0.75rem;
-  z-index: 1;
+.ws-preview-cta {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.55rem;
-  background: rgba(9, 9, 11, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
   letter-spacing: 0.04em;
-  backdrop-filter: blur(6px);
+  color: var(--accent-amber);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease, background 0.18s ease, border-color 0.18s ease;
+
+  .ws-card:hover & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &:hover {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.65);
+  }
 }
 
 .ws-body {
