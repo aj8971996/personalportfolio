@@ -59,27 +59,6 @@
   margin-bottom: 2rem;
 }
 
-/* Terminal */
-.terminal-line {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.625rem 1rem;
-  margin-bottom: 2.5rem;
-  min-height: 2.5rem;
-}
-
-.terminal-cursor {
-  color: var(--accent-bright);
-  margin-left: 1px;
-  animation: blink 1s step-end infinite;
-}
-
 /* CTAs */
 .hero-ctas {
   display: flex;
@@ -853,14 +832,6 @@
   .hero-inner {
     padding-top: 4.5rem;
     padding-bottom: 3rem;
-  }
-
-  /* Terminal line: allow text to wrap rather than overflow */
-  .terminal-line {
-    display: flex;
-    max-width: 100%;
-    white-space: normal;
-    word-break: break-word;
   }
 
   /* Case cards: tighter padding */

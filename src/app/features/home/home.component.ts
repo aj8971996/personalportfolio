@@ -1,26 +1,25 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, NgZone } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TerminalComponent } from './terminal/terminal.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, TerminalComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
-  terminalText = '';
-  private readonly fullTerminalText = '> building at the intersection of systems and stakeholders';
+export class HomeComponent implements OnDestroy, AfterViewInit {
 
   activeShot = 0;
+
   expandedCase = 0;
   readonly shots = [
     { label: 'Dashboard', url: 'scopeornope.app/dashboard',    src: 'assets/images/dashboard.png',      alt: 'ScopeOrNope dashboard showing scope risk across active projects' },
     { label: 'Request',   url: 'scopeornope.app/check',        src: 'assets/images/request_input.png',  alt: 'Client change request input and classification form' },
     { label: 'Results',   url: 'scopeornope.app/check#result', src: 'assets/images/request_output.png', alt: 'Scope classification result with generated tone-matched response' },
   ];
-  private typeInterval?: ReturnType<typeof setInterval>;
   private observer?: IntersectionObserver;
 
   readonly workSamples: Array<{
@@ -178,10 +177,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private sanitizer: DomSanitizer,
   ) {}
 
-  ngOnInit(): void {
-    setTimeout(() => this.startTypewriter(), 900);
-  }
-
   ngAfterViewInit(): void {
     this.observer = new IntersectionObserver(
       entries => entries.forEach(e => {
@@ -198,7 +193,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.typeInterval);
     this.observer?.disconnect();
     cancelAnimationFrame(this.bgRafId!);
     window.removeEventListener('resize', this.bgResizeRef);
@@ -334,14 +328,4 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.bgT += 0.004;
   }
 
-  private startTypewriter(): void {
-    let i = 0;
-    this.typeInterval = setInterval(() => {
-      if (i < this.fullTerminalText.length) {
-        this.terminalText += this.fullTerminalText[i++];
-      } else {
-        clearInterval(this.typeInterval);
-      }
-    }, 46);
-  }
 }
