@@ -172,7 +172,7 @@
       <div class="panel-header">
         <div>
           <h2 class="panel-title">Utilization by State</h2>
-          <p class="panel-caption">Click a bar to filter all panels to that state. Color bands: green ≥80%, amber 60–79%, red &lt;60%.</p>
+          <p class="panel-caption">The red bars are the states to prioritize. Click any bar to filter the flags table to that state and see which specific assets are driving the gap.</p>
         </div>
         @if (selectedState !== 'All') {
           <span class="active-filter-badge">{{ selectedState }} <button (click)="onStateSelect(selectedState)" aria-label="Clear state filter">×</button></span>
@@ -181,7 +181,7 @@
       <div class="chart-container chart-state">
         <canvas #utilizationChart></canvas>
       </div>
-      <p class="panel-note">Assets below 60% are flagged under the federal USE IT Act benchmark — applied here as a corporate portfolio review threshold.</p>
+      <p class="panel-note">Assets below 60% are flagged using the federal USE IT Act benchmark as a corporate portfolio review standard.</p>
     </div>
 
     <!-- Predictive Flags Table -->
@@ -189,7 +189,7 @@
       <div class="panel-header">
         <div>
           <h2 class="panel-title">Predictive Utilization Flags</h2>
-          <p class="panel-caption">Bottom 20 assets by current utilization. Trend: 2-period linear extrapolation. In production: connects to Workday / Coupa via Snowflake.</p>
+          <p class="panel-caption">These are the 20 assets most likely to breach before the next review. Sort by Risk to see which need a decision now vs. which can wait for the next cycle.</p>
         </div>
         <button class="export-btn" (click)="exportCSV()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -256,7 +256,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">Annual Cost / Sq Ft by Business Unit</h2>
-            <p class="panel-caption">Leased: annual rent. Owned: facility maintenance cost. Top 15 units by cost efficiency.</p>
+            <p class="panel-caption">The outlier bars on the right are the cost-efficiency gaps to explain. For leased assets, high cost-per-sqft with low utilization is a direct exit candidate. For owned, the same pattern signals a maintenance backlog, not a space problem.</p>
           </div>
           <div class="toggle-group">
             @for (o of ownershipOptions; track o) {
@@ -281,7 +281,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">Asset Age vs. Utilization</h2>
-            <p class="panel-caption">Bubble size proportional to rentable sq footage. Dashed line: linear trend. Older assets cluster at lower utilization — the primary driver of portfolio consolidation decisions.</p>
+            <p class="panel-caption">Utilization falls with asset age; the trend line makes the pattern explicit. Large bubbles (high sq footage) in the older, low-utilization quadrant are the consolidation candidates with the most recoverable space.</p>
           </div>
           <div class="legend-chips">
             <span class="legend-chip legend-owned">Owned</span>
@@ -304,7 +304,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">T&amp;E Spend Anomaly Detection</h2>
-            <p class="panel-caption">Monthly spend by category · Jan 2023 – Dec 2024. Red markers = months exceeding 1.5σ above 6-month rolling baseline. Synthetic data generated to demonstrate anomaly detection logic.</p>
+            <p class="panel-caption">Red markers flag the months worth a manager's attention. Toggle categories to compare patterns: if Travel and Meals spike together, that's a single event worth investigating; if only one category spikes, it's more likely a reporting or approval issue.</p>
           </div>
           <div class="toggle-group">
             @for (cat of teCategories; track cat) {

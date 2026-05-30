@@ -2,7 +2,7 @@
   <div class="cf-panel-header">
     <div>
       <h2 class="cf-panel-title">Cash Flow Waterfall</h2>
-      <p class="cf-panel-caption">Net weekly inflows (green) and outflows (red) for the selected period.</p>
+      <p class="cf-panel-caption">Read left to right: each bar moves the balance up (inflow) or down (outflow). The gap between Operating and Financing net flows explains most of the period movement. Compare those 2 columns first when investigating a shortfall.</p>
     </div>
     @if (loaded()) {
       <select
@@ -23,6 +23,6 @@
   }
 
   <p class="cf-panel-note">
-    Synthetic weekly cash flows · Period: {{ currentPeriod() }} · Green = net inflows · Red = net outflows
+    Synthetic weekly cash flows · period: {{ currentPeriod() }} · to identify the primary variance driver, compare Operating vs. Financing net; whichever is larger sets the agenda for the next review
   </p>
 </div>

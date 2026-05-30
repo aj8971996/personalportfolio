@@ -2,7 +2,7 @@
   <div class="cf-panel-header">
     <div>
       <h2 class="cf-panel-title">Yield Curve</h2>
-      <p class="cf-panel-caption">Historical overlays at −3m, −6m, −12m. Red area marks inversion zone (2Y &gt; 10Y).</p>
+      <p class="cf-panel-caption">The current shape signals the cost of liquidity and whether the market is pricing in stress. Compare to the −12m overlay to see how far conditions have shifted; a flattening or inversion changes the cost-of-debt estimate.</p>
     </div>
     @if (loaded()) {
       @if (inverted()) {
@@ -26,8 +26,6 @@
   }
 
   <p class="cf-panel-note">
-    Source: U.S. Treasury Daily Par Yield Curve Rates ·
-    as of {{ latestDate() | slice:0:10 }} ·
-    overlays at −3m, −6m, −12m
+    U.S. Treasury Daily Par Yield Curve Rates · as of {{ latestDate() | slice:0:10 }} · overlays at −3m, −6m, −12m · an inverted 2Y/10Y spread (red area) historically precedes tighter credit conditions within 12–18 months
   </p>
 </div>

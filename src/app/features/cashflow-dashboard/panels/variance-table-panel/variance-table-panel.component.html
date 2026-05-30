@@ -2,7 +2,7 @@
   <div class="cf-panel-header">
     <div>
       <h2 class="cf-panel-title">Variance Analysis</h2>
-      <p class="cf-panel-caption">Forecast vs. actual cash balance by period. Click column headers to sort.</p>
+      <p class="cf-panel-caption">Sort by Var% to find the periods furthest from forecast. A cluster of Watch or Breach statuses in consecutive periods signals a systematic model drift, not random noise, and warrants a separate root-cause review. Click any column header to sort.</p>
     </div>
     @if (loaded()) {
       <button (click)="exportTable()" class="cf-export-btn">
@@ -51,6 +51,6 @@
   }
 
   <p class="cf-panel-note">
-    Thresholds: On-track ≤ ±5% · Watch ±5–15% · Breach &gt; ±15% · Synthetic data · Sortable columns
+    Thresholds: on-track ≤ ±5% · watch ±5–15% · breach &gt;±15% · synthetic data · a single breach is noise; 3+ consecutive Watch periods is a model drift signal
   </p>
 </div>
