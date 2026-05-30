@@ -641,6 +641,13 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  // 3-column variant: used by the Tools section (3 items at desktop)
+  &.ws-grid--3col {
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   // Carousel upgrade: add this class when a 3rd sample lands.
   // Switches to horizontal scroll with snap; no structural refactor needed.
   &.ws-carousel {
@@ -793,63 +800,7 @@
 }
 
 /* ── Tools & Experiments ───────────────────────────────────── */
-.tools-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.tool-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.75rem 1.5rem;
-}
-
-.tool-card-inner {
-  flex: 1;
-}
-
-.tool-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.tool-title {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-}
-
-.tool-body {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-.tool-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.tool-card-cta {
-  display: flex;
-  align-items: center;
-}
+/* Tool cards reuse ws-* classes — no tool-specific styles needed */
 
 /* ── Contact ───────────────────────────────────────────────── */
 .contact-section {

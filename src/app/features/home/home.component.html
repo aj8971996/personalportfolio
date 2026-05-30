@@ -374,33 +374,72 @@
       </p>
     </div>
 
-    <div class="tools-grid">
+    <div class="ws-grid ws-grid--3col">
+      @for (tool of tools; track tool.href; let i = $index) {
+        <div class="ws-card glass-card reveal">
 
-      <div class="tool-card glass-card reveal">
-        <div class="tool-card-inner">
-          <div class="tool-eyebrow">School Project · CS Education</div>
-          <h3 class="tool-title">VGC Decision Tree Team Builder</h3>
-          <p class="tool-body">
-            A visual decision tree that builds competitive Pokémon teams (Reg M-A doubles).
-            Each branch is a real VGC concept (playstyle, Mega selection, speed control),
-            with the tree structure and entropy reduction explained inline as you choose.
-          </p>
-          <div class="tool-stack">
-            @for (t of ['Decision Trees', 'Angular 19', 'TypeScript', 'SVG Visualization', 'Showdown Sprites']; track t) {
-              <span class="tech-badge">{{ t }}</span>
+          <div class="ws-preview">
+            <div class="ws-iframe-wrap">
+              <iframe
+                [src]="toolUrls[i]"
+                loading="lazy"
+                [title]="tool.title + ' — live preview'"
+                scrolling="no"
+                tabindex="-1"
+                aria-hidden="true">
+              </iframe>
+            </div>
+            <div class="ws-preview-overlay" aria-hidden="true">
+              @if (tool.isRoute) {
+                <a [routerLink]="tool.href" class="ws-preview-cta" tabindex="-1">
+                  Open tool
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+              } @else {
+                <a [href]="tool.href" class="ws-preview-cta" tabindex="-1">
+                  Open tool
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+              }
+            </div>
+          </div>
+
+          <div class="ws-body">
+            <span class="ws-eyebrow">{{ tool.eyebrow }}</span>
+            <h3 class="ws-title">{{ tool.title }}</h3>
+            <p class="ws-desc">{{ tool.description }}</p>
+            <div class="ws-stack">
+              @for (t of tool.stack; track t) {
+                <span class="tech-badge">{{ t }}</span>
+              }
+            </div>
+            @if (tool.isRoute) {
+              <a [routerLink]="tool.href" class="btn-live ws-cta">
+                Open tool
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </a>
+            } @else {
+              <a [href]="tool.href" class="btn-live ws-cta">
+                Open tool
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </a>
             }
           </div>
-        </div>
-        <div class="tool-card-cta">
-          <a routerLink="/tools/pokemon-team-builder" class="btn-live">
-            Open Tool
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </a>
-        </div>
-      </div>
 
+        </div>
+      }
     </div>
 
   </div>

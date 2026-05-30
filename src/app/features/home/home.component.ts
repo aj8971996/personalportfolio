@@ -120,6 +120,47 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     else this.bgTick();
   };
 
+  readonly tools: Array<{
+    eyebrow: string; title: string; description: string;
+    stack: string[]; href: string; isRoute: boolean;
+  }> = [
+    {
+      eyebrow: 'CS education · decision theory',
+      title: 'VGC Decision Tree Team Builder',
+      description: 'A visual decision tree that builds competitive Pokémon teams (Reg M-A doubles). Each branch maps to a real VGC concept, with the tree structure and entropy reduction explained inline as you choose.',
+      stack: ['Angular 19', 'Decision Trees', 'TypeScript', 'SVG'],
+      href: '/tools/pokemon-team-builder',
+      isRoute: true,
+    },
+    {
+      eyebrow: 'Productivity tool · PRD authoring',
+      title: 'PRD Generator',
+      description: 'A structured PRD generator with priority-banded user stories and acceptance criteria. Fill in the form; the formatted document builds itself on the right. One-click export.',
+      stack: ['Vanilla JS', 'HTML/CSS', 'Print export'],
+      href: '/assets/tools/prd-generator.html',
+      isRoute: false,
+    },
+    {
+      eyebrow: 'Generative art · algorithm design',
+      title: 'Threshold Current',
+      description: 'A flow-field particle system driven by a continuous scalar threshold function. Amber particles above the threshold, indigo below, with a blend zone at the boundary. Each seed generates a different field.',
+      stack: ['p5.js', 'Flow fields', 'Canvas API'],
+      href: '/assets/art/threshold-current.html',
+      isRoute: false,
+    },
+  ];
+
+  private _toolUrls?: SafeResourceUrl[];
+
+  get toolUrls(): SafeResourceUrl[] {
+    if (!this._toolUrls) {
+      this._toolUrls = this.tools.map(t =>
+        this.sanitizer.bypassSecurityTrustResourceUrl(window.location.origin + t.href)
+      );
+    }
+    return this._toolUrls;
+  }
+
   private _workSampleUrls?: SafeResourceUrl[];
 
   get workSampleUrls(): SafeResourceUrl[] {
