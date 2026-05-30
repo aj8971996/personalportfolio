@@ -1,0 +1,20 @@
+<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-sm font-semibold text-gray-700">Cash Balance — Trend &amp; Forecast</h2>
+    <span class="text-xs text-gray-400">Scroll to zoom</span>
+  </div>
+
+  @if (!loaded()) {
+    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:380px"></div>
+  } @else {
+    <div echarts [options]="chartOptions()" style="height:380px"></div>
+  }
+
+  <p class="text-xs text-gray-400 mt-3">
+    Method: exponential smoothing (α = 0.25) &middot;
+    Horizon: 8 weeks &middot;
+    Band: 80% confidence &middot;
+    Red dots: &gt;2σ anomalies &middot;
+    Synthetic weekly data
+  </p>
+</div>

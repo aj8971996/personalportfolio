@@ -1,0 +1,30 @@
+<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-sm font-semibold text-gray-700">Yield Curve</h2>
+    @if (loaded()) {
+      @if (inverted()) {
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"></span>
+          Inverted (2Y &gt; 10Y)
+        </span>
+      } @else {
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
+          Normal
+        </span>
+      }
+    }
+  </div>
+
+  @if (!loaded()) {
+    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:380px"></div>
+  } @else {
+    <div echarts [options]="chartOptions()" style="height:380px"></div>
+  }
+
+  <p class="text-xs text-gray-400 mt-3">
+    Source: U.S. Treasury Daily Par Yield Curve Rates &middot;
+    as of {{ latestDate() | slice:0:10 }} &middot;
+    overlays at −3m, −6m, −12m
+  </p>
+</div>

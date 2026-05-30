@@ -1,0 +1,58 @@
+<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-sm font-semibold text-gray-700">Variance Analysis</h2>
+    @if (loaded()) {
+      <button
+        (click)="exportTable()"
+        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+        Export CSV
+      </button>
+    }
+  </div>
+
+  @if (!loaded()) {
+    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:320px"></div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-100 text-left">
+            @for (col of tableCols; track col.key) {
+              <th
+                class="pb-2 pr-4 font-medium text-gray-500 text-xs cursor-pointer hover:text-gray-700 select-none whitespace-nowrap"
+                (click)="setSort(col.key)">
+                {{ col.label }}
+                <span class="ml-1 text-gray-300">{{ sortIcon(col.key) }}</span>
+              </th>
+            }
+            <th class="pb-2 font-medium text-gray-500 text-xs">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of sortedRows(); track row.date) {
+            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <td class="py-2 pr-4 text-gray-700 font-mono text-xs">{{ row.date }}</td>
+              <td class="py-2 pr-4 text-gray-700">{{ fmt(row.forecast) }}</td>
+              <td class="py-2 pr-4 text-gray-700">{{ fmt(row.actual) }}</td>
+              <td class="py-2 pr-4" [class.text-green-600]="row.var_abs >= 0" [class.text-red-600]="row.var_abs < 0">
+                {{ fmt(row.var_abs) }}
+              </td>
+              <td class="py-2 pr-4" [class.text-green-600]="row.var_pct >= 0" [class.text-red-600]="row.var_pct < 0">
+                {{ fmtPct(row.var_pct) }}
+              </td>
+              <td class="py-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [class]="statusBadgeClass(row.status)">
+                  {{ statusLabel(row.status) }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <p class="text-xs text-gray-400 mt-3">
+    Thresholds: green ≤ ±5%, yellow ±5–15%, red &gt; ±15% &middot; Synthetic data &middot; Sortable columns
+  </p>
+</div>

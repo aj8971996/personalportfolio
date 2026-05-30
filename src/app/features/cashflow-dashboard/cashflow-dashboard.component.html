@@ -1,0 +1,49 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+    <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-lg font-semibold text-gray-900">Corporate Cash Flow &amp; Treasury Risk</h1>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Public Fed / Treasury data as proxy &middot; SAS pipeline &middot; Angular 19
+        </p>
+      </div>
+      <a routerLink="/" class="text-xs text-gray-400 hover:text-gray-700 transition-colors">← Portfolio</a>
+    </div>
+  </div>
+
+  <!-- ── Body ──────────────────────────────────────────────────────────── -->
+  <div class="max-w-screen-xl mx-auto px-6 py-8 space-y-6">
+
+    <!-- KPI bar -->
+    <app-rate-kpi-panel />
+
+    <!-- Hero: yield curve -->
+    <app-yield-curve-panel />
+
+    <!-- Analytical grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <app-cashflow-trend-panel />
+      <app-waterfall-panel />
+    </div>
+
+    <!-- Variance detail table -->
+    <app-variance-table-panel />
+
+    <!-- Methodology note -->
+    <div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6 text-sm text-gray-600 space-y-2">
+      <h3 class="font-semibold text-gray-700 text-xs uppercase tracking-wide">Interview Context</h3>
+      <p>
+        Built with public Federal Reserve (FRED) and U.S. Treasury data as a stand-in for internal TMS balances.
+        In a production environment, the same SAS PROC FORECAST pipeline connects to Workday, Coupa, or your TMS —
+        the analytical pattern and the confidence-band derivation are identical; only the data source changes.
+      </p>
+      <p class="text-xs text-gray-400">
+        Data sources: FRED DFF, DGS2, DGS10 (St. Louis Fed) &middot;
+        U.S. Treasury Daily Par Yield Curve Rates &middot;
+        Synthetic cash-flow series (SAS macro §5.1 replicated in JS for portfolio)
+      </p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,246 @@
+<!-- ═══ PAGE WRAPPER ═══════════════════════════════════════════ -->
+<div class="poke-page">
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <!-- ─── HEADER ──────────────────────────────────────────────── -->
+  <header class="masthead">
+    <div class="masthead-left">
+      <a routerLink="/" class="back-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        alexbarkus.dev
+      </a>
+      <h1 class="masthead-title">
+        <span class="title-eyebrow">// VGC TOOLKIT · REG M-A · MAY 2026</span>
+        <span class="title-accent">DECISION</span> TREE<br>TEAM <span class="title-accent">BUILDER.</span>
+      </h1>
+    </div>
+    <div class="masthead-meta">
+      <div class="meta-row"><span class="live-dot"></span>POKÉMON CHAMPIONS</div>
+      <div class="meta-row">FORMAT: DOUBLES / LV.50</div>
+      <div class="meta-row">POOL: 269 MONS · 59 MEGAS</div>
+      <div class="meta-row">SCHOOL PROJECT · CS DEMO</div>
+    </div>
+  </header>
+
+  <!-- ─── PROGRESS RAIL ───────────────────────────────────────── -->
+  <div class="progress-rail">
+    @for (step of progressSteps; track step.label; let i = $index) {
+      <div class="prog-cell" [class.is-done]="step.done" [class.is-active]="step.active">
+        <div class="seg" [class.done]="step.done" [class.active]="step.active"></div>
+        <span class="seg-label">{{ (i + 1).toString().padStart(2, '0') }} · {{ step.label }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- ─── MAIN STAGE ──────────────────────────────────────────── -->
+  @if (!isTerminal) {
+    <div class="stage">
+
+      <!-- Decision panel -->
+      <section class="decision-panel glass-card-amber" style="padding: 24px; border-left-width: 3px; border-top: 2px solid var(--accent-amber)">
+
+        <!-- Breadcrumb -->
+        @if (breadcrumb.length) {
+          <div class="breadcrumb">
+            @for (crumb of breadcrumb; track crumb; let last = $last) {
+              <span class="crumb">{{ crumb }}</span>
+              @if (!last) { <span class="crumb-sep">▸</span> }
+            }
+            <span class="crumb-sep">▸</span>
+            <span class="crumb crumb-current">Step {{ path.length + 1 }}</span>
+          </div>
+        }
+
+        <div class="depth-tag">NODE · DEPTH {{ currentNode.depth }} / 4</div>
+        <h2 class="question-title">{{ currentNode.question }}</h2>
+        <p class="question-sub">{{ currentNode.description }}</p>
+
+        <!-- Option cards -->
+        <div class="options">
+          @for (opt of currentNode.options; track opt.id; let i = $index) {
+            <button
+              class="option-card"
+              [style.--accent]="typeColor(opt.typeColor ?? 'normal')"
+              [style.animation-delay.ms]="i * 70"
+              (click)="choose(opt.id)">
+              <div class="card-head">
+                <div class="card-icon">{{ opt.icon }}</div>
+                <div class="card-label">{{ opt.label }}</div>
+              </div>
+              <div class="card-desc">{{ opt.desc }}</div>
+              @if (opt.sample?.length) {
+                <div class="card-types">
+                  @for (t of opt.sample; track t) {
+                    <span class="type-pill" [style.background]="typeColor(t)">{{ t }}</span>
+                  }
+                </div>
+              }
+              @if (opt.mon) {
+                <div class="card-sprite-wrap">
+                  <img
+                    class="card-sprite"
+                    [src]="spriteUrl(opt.mon)"
+                    [alt]="opt.label"
+                    (error)="onSpriteError($event)"
+                    loading="lazy" />
+                </div>
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          @if (path.length) {
+            <button class="btn-secondary" (click)="stepBack()">◀ Step Back</button>
+          }
+          <button class="btn-secondary" (click)="reset()">↻ Reset</button>
+        </div>
+      </section>
+
+      <!-- Tree visualization panel -->
+      <aside class="tree-panel glass-card">
+        <div class="tree-header">
+          <div>
+            <div class="tree-title">THE TREE</div>
+            <div class="tree-subtitle">decision space · live view</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="tree-stats">
+          <div class="tree-stat"><span class="stat-v">{{ treeStats.depth }}</span><span class="stat-l">DEPTH</span></div>
+          <div class="tree-stat"><span class="stat-v">{{ treeStats.branches }}</span><span class="stat-l">BRANCHES</span></div>
+          <div class="tree-stat"><span class="stat-v">{{ treeStats.leaves }}</span><span class="stat-l">LEAVES</span></div>
+          <div class="tree-stat"><span class="stat-v">{{ treeStats.pathLen }}</span><span class="stat-l">PATH</span></div>
+        </div>
+
+        <!-- SVG tree -->
+        <svg class="tree-viz" viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- Links first (below nodes) -->
+          @for (link of svgData.links; track $index) {
+            <path
+              [attr.d]="link.d"
+              class="tlink"
+              [class.tlink-active]="link.active" />
+          }
+          <!-- Nodes -->
+          @for (node of svgData.nodes; track $index) {
+            <g>
+              <rect
+                [attr.x]="node.rect.x"
+                [attr.y]="node.rect.y"
+                [attr.width]="node.rect.width"
+                [attr.height]="node.rect.height"
+                rx="4"
+                class="tnode-rect"
+                [class.tnode-done]="node.kind === 'done'"
+                [class.tnode-sibling]="node.kind === 'sibling'"
+                [class.tnode-unexplored]="node.kind === 'unexplored'"
+                [class.tnode-root]="node.isRoot"
+                [class.tnode-animated]="node.animated" />
+              <text
+                [attr.x]="node.cx"
+                [attr.y]="node.cy"
+                class="tnode-text"
+                [class.tnode-text-done]="node.kind === 'done'"
+                [class.tnode-text-sibling]="node.kind === 'sibling'"
+                dominant-baseline="middle"
+                text-anchor="middle">{{ node.label }}</text>
+            </g>
+          }
+        </svg>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot legend-dot-active"></span>Active path</div>
+          <div class="legend-item"><span class="legend-dot legend-dot-done"></span>Decided</div>
+          <div class="legend-item"><span class="legend-dot legend-dot-unexplored"></span>Unexplored</div>
+        </div>
+
+        <!-- Educational callout -->
+        <div class="edu-callout">
+          <span class="edu-label">CS NOTE</span>
+          <span [innerHTML]="eduMessage"></span>
+        </div>
+      </aside>
+    </div>
+  }
+
+  <!-- ─── FINAL TEAM ───────────────────────────────────────────── -->
+  @if (isTerminal) {
+    <div class="team-result fade-in">
+      <div class="team-result-head">
+        <div>
+          <h2 class="team-result-heading">YOUR TEAM</h2>
+          <div class="team-archetype">{{ archetypeLabel }} · {{ finalRole }}</div>
+        </div>
+        <div class="team-stamp">REG M-A · VALID</div>
+      </div>
+
+      <div class="team-grid">
+        @for (monId of team; track monId; let i = $index) {
+          @if (MON[monId]) {
+            <div class="mon-card" [attr.data-slot]="(i + 1).toString().padStart(2, '0')">
+              <div class="mon-role">{{ monRole(i, monId) }}</div>
+              <div class="mon-sprite-wrap">
+                <img
+                  class="mon-sprite"
+                  [src]="spriteUrl(monId, true)"
+                  [alt]="monName(monId)"
+                  (error)="onSpriteError($event)"
+                  loading="lazy" />
+              </div>
+              <div class="mon-name" [class.mon-name-mega]="MON[monId].mega">
+                {{ monName(monId) }}
+              </div>
+              <div class="mon-types">
+                @for (t of MON[monId].types; track t) {
+                  <span class="type-pill" [style.background]="typeColor(t)">{{ t }}</span>
+                }
+              </div>
+              <div class="mon-details">
+                @if (MON[monId].ability) {
+                  <span class="detail-key">ABILITY</span>
+                  <span class="detail-val">{{ MON[monId].ability }}</span>
+                }
+                @if (MON[monId].item) {
+                  <span class="detail-key">ITEM</span>
+                  <span class="detail-val">{{ MON[monId].item }}</span>
+                }
+                @if (MON[monId].moves.length) {
+                  <span class="detail-key">MOVES</span>
+                  <span class="detail-val">{{ MON[monId].moves.join(' · ') }}</span>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Decision path rationale -->
+      <div class="team-rationale">
+        <span class="rationale-label">// DECISION PATH</span>
+        Your team was assembled by traversing <strong>{{ path.length }} decision nodes</strong> from root to leaf.
+        Each node split on a different attribute:
+        <strong>{{ decisionPathLabel }}</strong>.
+        This path is one of <strong>48 possible leaf states</strong> in the tree, encoding ~5.6 bits
+        of decision information. In a real ML decision tree, splits would be learned from tournament data;
+        here they encode <em>expert knowledge</em> about VGC team building.
+      </div>
+
+      <div class="controls">
+        <button class="btn-primary" (click)="reset()">↻ Build Another Team</button>
+        <button class="btn-secondary" (click)="exportTeamSvg()">⬇ Export Tree (.SVG)</button>
+        <button class="btn-secondary" (click)="exportTeam()">⬇ Export Team (.TXT)</button>
+      </div>
+    </div>
+  }
+
+  <!-- ─── FOOTER ───────────────────────────────────────────────── -->
+  <footer class="poke-footer">
+    <div>Pokémon · Nintendo · Game Freak — fan-made school project · sprites via Pokémon Showdown</div>
+    <div>Data: Pikalytics · Victory Road · Bulbapedia</div>
+  </footer>
+</div>

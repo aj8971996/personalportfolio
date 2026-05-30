@@ -31,6 +31,22 @@ export const routes: Routes = [
     title: 'Treasury & Real Estate Intelligence — Alex Barkus',
   },
   {
+    path: 'tools/pokemon-team-builder',
+    loadComponent: () =>
+      import('./features/pokemon/pokemon-team-builder.component').then(
+        m => m.PokemonTeamBuilderComponent,
+      ),
+    title: 'VGC Decision Tree Team Builder — Alex Barkus',
+  },
+  {
+    path: 'portfolio/cashflow-risk',
+    loadComponent: () =>
+      import('./features/cashflow-dashboard/cashflow-dashboard.component').then(
+        m => m.CashflowDashboardComponent,
+      ),
+    title: 'Corporate Cash Flow & Treasury Risk — Alex Barkus',
+  },
+  {
     path: '**',
     redirectTo: ''
   }
