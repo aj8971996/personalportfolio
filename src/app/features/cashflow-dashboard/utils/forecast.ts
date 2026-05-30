@@ -86,7 +86,7 @@ export function buildWaterfallOption(labels: string[], values: number[]): EChart
       splitLine: { show: false },
       data: labels,
       axisLabel: { color: '#94a3b8', fontSize: 11 },
-      axisLine: { lineStyle: { color: '#e2e8f0' } },
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
     },
     yAxis: {
       type: 'value',
@@ -95,7 +95,7 @@ export function buildWaterfallOption(labels: string[], values: number[]): EChart
         fontSize: 11,
         formatter: (v: number) => `$${(v / 1_000_000).toFixed(1)}M`,
       },
-      splitLine: { lineStyle: { color: '#f1f5f9' } },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
     },
     series: [
       {

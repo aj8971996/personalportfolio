@@ -1,49 +1,47 @@
-<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-sm font-semibold text-gray-700">Variance Analysis</h2>
+<div class="cf-panel">
+  <div class="cf-panel-header">
+    <div>
+      <h2 class="cf-panel-title">Variance Analysis</h2>
+      <p class="cf-panel-caption">Forecast vs. actual cash balance by period. Click column headers to sort.</p>
+    </div>
     @if (loaded()) {
-      <button
-        (click)="exportTable()"
-        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+      <button (click)="exportTable()" class="cf-export-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
         Export CSV
       </button>
     }
   </div>
 
   @if (!loaded()) {
-    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:320px"></div>
+    <div class="cf-skeleton" style="height:320px"></div>
   } @else {
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+    <div class="cf-table-wrapper">
+      <table class="cf-table">
         <thead>
-          <tr class="border-b border-gray-100 text-left">
+          <tr>
             @for (col of tableCols; track col.key) {
-              <th
-                class="pb-2 pr-4 font-medium text-gray-500 text-xs cursor-pointer hover:text-gray-700 select-none whitespace-nowrap"
-                (click)="setSort(col.key)">
+              <th (click)="setSort(col.key)">
                 {{ col.label }}
-                <span class="ml-1 text-gray-300">{{ sortIcon(col.key) }}</span>
+                <span class="cf-sort-icon">{{ sortIcon(col.key) }}</span>
               </th>
             }
-            <th class="pb-2 font-medium text-gray-500 text-xs">Status</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           @for (row of sortedRows(); track row.date) {
-            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-              <td class="py-2 pr-4 text-gray-700 font-mono text-xs">{{ row.date }}</td>
-              <td class="py-2 pr-4 text-gray-700">{{ fmt(row.forecast) }}</td>
-              <td class="py-2 pr-4 text-gray-700">{{ fmt(row.actual) }}</td>
-              <td class="py-2 pr-4" [class.text-green-600]="row.var_abs >= 0" [class.text-red-600]="row.var_abs < 0">
-                {{ fmt(row.var_abs) }}
-              </td>
-              <td class="py-2 pr-4" [class.text-green-600]="row.var_pct >= 0" [class.text-red-600]="row.var_pct < 0">
-                {{ fmtPct(row.var_pct) }}
-              </td>
-              <td class="py-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [class]="statusBadgeClass(row.status)">
-                  {{ statusLabel(row.status) }}
-                </span>
+            <tr>
+              <td class="cf-td-mono">{{ row.date }}</td>
+              <td>{{ fmt(row.forecast) }}</td>
+              <td>{{ fmt(row.actual) }}</td>
+              <td [class.cf-pos]="row.var_abs >= 0" [class.cf-neg]="row.var_abs < 0">{{ fmt(row.var_abs) }}</td>
+              <td [class.cf-pos]="row.var_pct >= 0" [class.cf-neg]="row.var_pct < 0">{{ fmtPct(row.var_pct) }}</td>
+              <td>
+                <span class="cf-badge" [class]="statusBadgeClass(row.status)">{{ statusLabel(row.status) }}</span>
               </td>
             </tr>
           }
@@ -52,7 +50,7 @@
     </div>
   }
 
-  <p class="text-xs text-gray-400 mt-3">
-    Thresholds: green ≤ ±5%, yellow ±5–15%, red &gt; ±15% &middot; Synthetic data &middot; Sortable columns
+  <p class="cf-panel-note">
+    Thresholds: On-track ≤ ±5% · Watch ±5–15% · Breach &gt; ±15% · Synthetic data · Sortable columns
   </p>
 </div>

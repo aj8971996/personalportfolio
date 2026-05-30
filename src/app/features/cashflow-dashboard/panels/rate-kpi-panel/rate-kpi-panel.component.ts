@@ -17,6 +17,7 @@ interface KpiCard {
   standalone: true,
   imports: [],
   templateUrl: './rate-kpi-panel.component.html',
+  styleUrls: ['./rate-kpi-panel.component.scss'],
 })
 export class RateKpiPanelComponent implements OnInit {
   private readonly svc = inject(CashflowService);
@@ -93,7 +94,7 @@ export class RateKpiPanelComponent implements OnInit {
   }
 
   statusTextClass(status: KpiCard['status']): string {
-    return { green: 'text-green-600', yellow: 'text-yellow-600', red: 'text-red-600' }[status];
+    return { green: 'text-green-400', yellow: 'text-yellow-400', red: 'text-red-400' }[status];
   }
 
   /** Convert data array to SVG polyline points string in a 120x48 viewBox. */

@@ -1,0 +1,214 @@
+/* ── Page Shell ─────────────────────────────────────────────── */
+.dash-page {
+  min-height: 100vh;
+  background: var(--bg-base);
+  padding-bottom: 4rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.dash-header {
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0 1.5rem;
+}
+
+.dash-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  transition: color 0.2s;
+  &:hover { color: var(--accent-bright); }
+}
+
+.dash-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 0.4rem;
+}
+
+.dash-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.35rem;
+}
+
+.dash-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.dash-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.data-source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.25rem 0.7rem;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: var(--text-secondary);
+  }
+}
+
+.methodology-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.25rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+
+  svg { transition: transform 0.25s ease; }
+  .rotate-180 { transform: rotate(180deg); }
+
+  &:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.18); }
+}
+
+/* ── Methodology Drawer ─────────────────────────────────────── */
+.methodology-drawer {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.methodology-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+
+  p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 860px;
+    margin-bottom: 0.75rem;
+    &:last-child { margin-bottom: 0; }
+  }
+
+  strong { color: var(--text-primary); }
+}
+
+/* ── Tab Navigation ─────────────────────────────────────────── */
+.tab-nav {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+}
+
+.tab-nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.tab-btn {
+  position: relative;
+  padding: 0.875rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-bright);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  &:hover { color: var(--text-secondary); }
+
+  &.active {
+    color: var(--text-primary);
+    &::after { transform: scaleX(1); }
+  }
+}
+
+/* ── Tab Content & Section Layout ───────────────────────────── */
+.tab-content { padding-top: 1.25rem; }
+
+.dash-section {
+  max-width: 1280px;
+  margin: 0 auto 1.25rem;
+  padding: 0 1.5rem;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.dash-footer {
+  max-width: 1280px;
+  margin: 2rem auto 0;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+
+  p {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+
+  a { color: var(--accent-bright); &:hover { text-decoration: underline; } }
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 639px) {
+  .tab-btn { padding: 0.75rem 0.875rem; font-size: 0.78rem; }
+  .dash-section { padding: 0 1rem; }
+}

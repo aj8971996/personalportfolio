@@ -1,20 +1,18 @@
-<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-sm font-semibold text-gray-700">Cash Balance — Trend &amp; Forecast</h2>
-    <span class="text-xs text-gray-400">Scroll to zoom</span>
+<div class="cf-panel">
+  <div class="cf-panel-header">
+    <div>
+      <h2 class="cf-panel-title">Cash Balance — Trend &amp; Forecast</h2>
+      <p class="cf-panel-caption">Exponential smoothing (α = 0.25) · 8-week horizon · 80% confidence band · Scroll to zoom · Red dots: &gt;2σ anomalies</p>
+    </div>
   </div>
 
   @if (!loaded()) {
-    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:380px"></div>
+    <div class="cf-skeleton" style="height:400px"></div>
   } @else {
-    <div echarts [options]="chartOptions()" style="height:380px"></div>
+    <div echarts [options]="chartOptions()" style="height:400px"></div>
   }
 
-  <p class="text-xs text-gray-400 mt-3">
-    Method: exponential smoothing (α = 0.25) &middot;
-    Horizon: 8 weeks &middot;
-    Band: 80% confidence &middot;
-    Red dots: &gt;2σ anomalies &middot;
-    Synthetic weekly data
+  <p class="cf-panel-note">
+    Synthetic weekly data · Exponential smoothing α = 0.25 · Horizon: 8 weeks · Band: 80% confidence · Anomalies: &gt;2σ z-score
   </p>
 </div>

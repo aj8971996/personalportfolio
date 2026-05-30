@@ -1,9 +1,12 @@
-<div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6">
-  <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-    <h2 class="text-sm font-semibold text-gray-700">Cash Flow Waterfall</h2>
+<div class="cf-panel">
+  <div class="cf-panel-header">
+    <div>
+      <h2 class="cf-panel-title">Cash Flow Waterfall</h2>
+      <p class="cf-panel-caption">Net weekly inflows (green) and outflows (red) for the selected period.</p>
+    </div>
     @if (loaded()) {
       <select
-        class="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-600 bg-white"
+        class="cf-select"
         [value]="currentPeriod()"
         (change)="selectPeriod($any($event.target).value)">
         @for (p of availablePeriods(); track p) {
@@ -14,13 +17,12 @@
   </div>
 
   @if (!loaded()) {
-    <div class="animate-pulse bg-gray-100 rounded-xl" style="height:380px"></div>
+    <div class="cf-skeleton" style="height:400px"></div>
   } @else {
-    <div echarts [options]="chartOptions()" style="height:380px"></div>
+    <div echarts [options]="chartOptions()" style="height:400px"></div>
   }
 
-  <p class="text-xs text-gray-400 mt-3">
-    Synthetic weekly cash flows &middot; period: {{ currentPeriod() }} &middot;
-    Green = net inflows, Red = net outflows
+  <p class="cf-panel-note">
+    Synthetic weekly cash flows · Period: {{ currentPeriod() }} · Green = net inflows · Red = net outflows
   </p>
 </div>

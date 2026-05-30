@@ -9,6 +9,7 @@ import { YieldCurveService } from '../../services/yield-curve.service';
   standalone: true,
   imports: [NgxEchartsDirective, SlicePipe],
   templateUrl: './yield-curve-panel.component.html',
+  styleUrls: ['./yield-curve-panel.component.scss'],
 })
 export class YieldCurvePanelComponent implements OnInit {
   private readonly svc = inject(YieldCurveService);
@@ -38,12 +39,12 @@ export class YieldCurvePanelComponent implements OnInit {
         type: 'category',
         data: labels,
         axisLabel: { color: '#94a3b8', fontSize: 11 },
-        axisLine: { lineStyle: { color: '#e2e8f0' } },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
       },
       yAxis: {
         type: 'value',
         axisLabel: { color: '#94a3b8', fontSize: 11, formatter: (v: number) => `${v.toFixed(1)}%` },
-        splitLine: { lineStyle: { color: '#f1f5f9' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
         min: (v: { min: number }) => Math.max(0, +(v.min - 0.5).toFixed(1)),
       },
       series: [

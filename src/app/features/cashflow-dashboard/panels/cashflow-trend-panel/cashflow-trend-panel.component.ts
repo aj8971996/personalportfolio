@@ -9,6 +9,7 @@ import { zScoreAnomalies } from '../../utils/forecast';
   standalone: true,
   imports: [NgxEchartsDirective],
   templateUrl: './cashflow-trend-panel.component.html',
+  styleUrls: ['./cashflow-trend-panel.component.scss'],
 })
 export class CashflowTrendPanelComponent implements OnInit {
   private readonly svc = inject(CashflowService);
@@ -55,7 +56,7 @@ export class CashflowTrendPanelComponent implements OnInit {
         type: 'category',
         data: allDates,
         axisLabel: { color: '#94a3b8', fontSize: 10, rotate: 30, showMaxLabel: true },
-        axisLine: { lineStyle: { color: '#e2e8f0' } },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
         boundaryGap: false,
       },
       yAxis: {
@@ -65,7 +66,7 @@ export class CashflowTrendPanelComponent implements OnInit {
           fontSize: 11,
           formatter: (v: number) => `$${(v / 1_000_000).toFixed(1)}M`,
         },
-        splitLine: { lineStyle: { color: '#f1f5f9' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
       },
       series: [
         {

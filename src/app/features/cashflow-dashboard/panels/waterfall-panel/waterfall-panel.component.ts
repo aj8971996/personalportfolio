@@ -10,6 +10,7 @@ import { buildWaterfallForPeriod } from '../../utils/transforms';
   standalone: true,
   imports: [NgxEchartsDirective],
   templateUrl: './waterfall-panel.component.html',
+  styleUrls: ['./waterfall-panel.component.scss'],
 })
 export class WaterfallPanelComponent implements OnInit {
   private readonly svc    = inject(CashflowService);

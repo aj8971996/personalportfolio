@@ -9,6 +9,7 @@ import { formatCurrency, formatPct } from '../../utils/transforms';
   standalone: true,
   imports: [],
   templateUrl: './variance-table-panel.component.html',
+  styleUrls: ['./variance-table-panel.component.scss'],
 })
 export class VarianceTablePanelComponent implements OnInit {
   readonly tableCols: Array<{ key: SortKey; label: string }> = [
@@ -69,11 +70,7 @@ export class VarianceTablePanelComponent implements OnInit {
   }
 
   statusBadgeClass(status: 'green' | 'yellow' | 'red'): string {
-    return {
-      green:  'bg-green-50 text-green-700',
-      yellow: 'bg-yellow-50 text-yellow-700',
-      red:    'bg-red-50 text-red-700',
-    }[status];
+    return { green: 'badge-ok', yellow: 'badge-watch', red: 'badge-breach' }[status];
   }
 
   statusLabel(status: 'green' | 'yellow' | 'red'): string {
