@@ -631,6 +631,155 @@
   justify-content: flex-start;
 }
 
+/* ── Work Samples ──────────────────────────────────────────── */
+.ws-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // Carousel upgrade: add this class when a 3rd sample lands.
+  // Switches to horizontal scroll with snap; no structural refactor needed.
+  &.ws-carousel {
+    @media (min-width: 768px) {
+      display: flex;
+      grid-template-columns: unset;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 0.5rem;
+
+      &::-webkit-scrollbar { display: none; }
+
+      .ws-card {
+        flex: 0 0 calc(50% - 0.75rem);
+        scroll-snap-align: start;
+      }
+    }
+  }
+}
+
+.ws-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+
+.ws-preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+.ws-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.ws-preview-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 65% 35%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 25% 75%, rgba(245, 158, 11, 0.07) 0%, transparent 50%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99, 102, 241, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.055) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+.ws-preview-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--accent-bright);
+  opacity: 0.55;
+  margin-bottom: 0.5rem;
+}
+
+.ws-data-tag {
+  position: absolute;
+  bottom: 0.625rem;
+  right: 0.75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  background: rgba(9, 9, 11, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px);
+}
+
+.ws-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.ws-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.ws-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-bottom: 0.625rem;
+}
+
+.ws-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.ws-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.ws-cta {
+  align-self: flex-start;
+}
+
 /* ── Tools & Experiments ───────────────────────────────────── */
 .tools-grid {
   display: grid;

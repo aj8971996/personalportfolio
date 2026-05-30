@@ -121,10 +121,10 @@
       <span class="section-label">Featured Work</span>
       <h2 class="section-heading">Case Studies</h2>
       <p class="section-sub">
-        Three builds, all designed, architected, and shipped solo: ScopeOrNope,
+        3 builds, all designed, architected, and shipped solo: ScopeOrNope,
         an indie SaaS taken from zero to production; a multi-department operations
         platform at Sphere Entertainment; and data infrastructure for one of the
-        five largest school districts in the US.
+        5 largest school districts in the US.
       </p>
     </div>
 
@@ -195,104 +195,6 @@
 
           <div class="case-stack">
             @for (t of ['Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Supabase', 'Drizzle ORM', 'Anthropic API', 'Stripe', 'PostHog', 'Vercel']; track t) {
-              <span class="tech-badge">{{ t }}</span>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Case Study: Treasury Dashboard -->
-    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 3">
-      <div class="case-header-row">
-        <button class="case-trigger" (click)="toggleCase(3)" [attr.aria-expanded]="expandedCase === 3">
-          <div class="case-trigger-left">
-            <div class="case-company">Portfolio Work Sample · Data Analysis</div>
-            <h3 class="case-title">Corporate Real Estate &amp; Operations Intelligence Dashboard</h3>
-            <div class="case-meta">Portfolio work sample · Data analysis · 2026 · Angular + Chart.js + GSA Public Data</div>
-          </div>
-          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </button>
-        <div class="case-header-actions">
-          <div class="case-outcome-badge">5-panel live dashboard</div>
-          <a routerLink="/portfolio/treasury-analysis" class="btn-live">
-            Open Dashboard
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div class="case-body" [class.case-body-open]="expandedCase === 3">
-        <div class="case-body-inner">
-          <p class="case-context">
-            Which assets are underperforming and by how much? This dashboard surfaces that from the
-            full GSA real property portfolio (~270,000 federal assets used as a corporate proxy):
-            utilization by state, cost-per-sqft by business unit, and predictive flags on the 20 assets
-            most likely to breach before the next portfolio review.
-          </p>
-
-          <ul class="case-bullets">
-            <li>Portfolio utilization analysis: state-level benchmarking with color-banded status indicators (green ≥80%, amber 60–79%, red &lt;60%), matching the federal USE IT Act threshold applied as a corporate review standard</li>
-            <li>Cost intelligence: annual cost per square foot by business unit, with owned vs. leased toggle (rent for leased assets, maintenance cost for owned), supporting the lease-vs-own decision framework</li>
-            <li>Predictive flagging: bottom-20 underperforming assets with 2-period linear trend extrapolation, risk-banded (critical/review/monitor), and CSV export; mirrors automated report delivery in production environments</li>
-            <li>T&amp;E anomaly detection: rolling 6-month baseline with 1.5σ spike markers across Travel, Meals, Lodging, and Fleet categories over 24 months of synthetic expense data</li>
-            <li>Methodology note references production integration points (Workday, Coupa, Snowflake) to contextualize how the same analytical patterns would connect to a real corporate data stack</li>
-          </ul>
-
-          <div class="case-stack">
-            @for (t of ['Angular 19', 'TypeScript', 'Chart.js', 'Tailwind CSS', 'Linear Regression', 'GSA FRPP Data', 'Anomaly Detection', 'CSV Export']; track t) {
-              <span class="tech-badge">{{ t }}</span>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Case Study: Cash Flow & Treasury Risk Dashboard (Dashboard 2) -->
-    <div class="case-study glass-card-amber reveal" [class.case-expanded]="expandedCase === 4">
-      <div class="case-header-row">
-        <button class="case-trigger" (click)="toggleCase(4)" [attr.aria-expanded]="expandedCase === 4">
-          <div class="case-trigger-left">
-            <div class="case-company">Portfolio Work Sample · Treasury Analytics</div>
-            <h3 class="case-title">Corporate Cash Flow &amp; Treasury Risk Intelligence Dashboard</h3>
-            <div class="case-meta">Portfolio work sample · Treasury analytics · 2026 · Angular + ECharts + FRED / U.S. Treasury Data</div>
-          </div>
-          <svg class="case-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </button>
-        <div class="case-header-actions">
-          <div class="case-outcome-badge">5-panel live dashboard</div>
-          <a routerLink="/portfolio/cashflow-risk" class="btn-live">
-            Open Dashboard
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div class="case-body" [class.case-body-open]="expandedCase === 4">
-        <div class="case-body-inner">
-          <p class="case-context">
-            Answers the question a treasurer asks weekly: is cash where it should be, what's driving
-            the variance, and what does the rate environment mean for cost of liquidity? Built on live
-            FRED and U.S. Treasury data with the same analytical pattern that connects to Workday,
-            Coupa, or a TMS in production.
-          </p>
-
-          <ul class="case-bullets">
-            <li>Yield curve visualization with historical overlays (−3m, −6m, −12m) and an automatic 2Y/10Y inversion detector with a red/green badge; mirrors a daily rate-environment briefing</li>
-            <li>Cash balance trend panel: exponential-smoothing forecast (8-week horizon) with 80% confidence band rendered as a shaded area, and anomaly markers (&gt;2σ deviations) on the historical series</li>
-            <li>Cash flow waterfall chart: period-selector drives a stacked-bar decomposition from opening balance through Operating/Financing/Investing net flows to closing balance</li>
-            <li>Rate KPI cards: live Fed Funds, 10Y yield, 2Y–10Y spread (traffic-light status: inverted/flat/normal), and a duration-exposure estimate, each with a 90-day SVG sparkline</li>
-            <li>Variance analysis table: sortable by any column, color-coded status badges (±5%/±15% thresholds), and one-click CSV export; data generated by the SAS variance pipeline (§5.4 of spec)</li>
-          </ul>
-
-          <div class="case-stack">
-            @for (t of ['Angular 19', 'TypeScript', 'ECharts', 'ngx-echarts', 'Signals', 'PapaParse', 'SAS Pipeline', 'FRED API', 'U.S. Treasury', 'lodash-es']; track t) {
               <span class="tech-badge">{{ t }}</span>
             }
           </div>
@@ -387,6 +289,76 @@
           </div>
         </div>
       </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ WORK SAMPLES ════════════════════════════════════════════ -->
+<section class="section" style="padding-top: 0">
+  <div class="section-inner">
+
+    <div class="section-header reveal">
+      <span class="section-label">Work samples</span>
+      <h2 class="section-heading">Live dashboards</h2>
+      <p class="section-sub">
+        Interactive analytics built on public data. Each one answers a specific business question end to end.
+        Same analytical patterns connect to Workday, Coupa, or a TMS in production.
+      </p>
+    </div>
+
+    <!-- ws-carousel class activates horizontal scroll at 3+ items -->
+    <div class="ws-grid">
+      @for (sample of workSamples; track sample.route) {
+        <div class="ws-card glass-card-amber reveal">
+
+          <!-- Preview area: swap src into sample.preview to upgrade from placeholder to screenshot -->
+          <div class="ws-preview">
+            @if (sample.preview) {
+              <img [src]="sample.preview" [alt]="sample.title + ' preview'" class="ws-preview-img" />
+            } @else {
+              <div class="ws-preview-placeholder">
+                <svg class="ws-preview-icon" width="72" height="56" viewBox="0 0 72 56" fill="none" aria-hidden="true">
+                  <rect x="4"  y="36" width="10" height="16" rx="1.5" fill="currentColor" opacity="0.18"/>
+                  <rect x="18" y="24" width="10" height="28" rx="1.5" fill="currentColor" opacity="0.28"/>
+                  <rect x="32" y="14" width="10" height="38" rx="1.5" fill="currentColor" opacity="0.4"/>
+                  <rect x="46" y="26" width="10" height="26" rx="1.5" fill="currentColor" opacity="0.28"/>
+                  <rect x="60" y="32" width="10" height="20" rx="1.5" fill="currentColor" opacity="0.18"/>
+                  <polyline points="9,36 23,24 37,14 51,26 65,32"
+                    stroke="currentColor" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    fill="none" opacity="0.65"/>
+                  <circle cx="9"  cy="36" r="2"   fill="currentColor" opacity="0.7"/>
+                  <circle cx="23" cy="24" r="2"   fill="currentColor" opacity="0.7"/>
+                  <circle cx="37" cy="14" r="2.5" fill="currentColor"/>
+                  <circle cx="51" cy="26" r="2"   fill="currentColor" opacity="0.7"/>
+                  <circle cx="65" cy="32" r="2"   fill="currentColor" opacity="0.7"/>
+                </svg>
+                <span class="ws-data-tag">{{ sample.dataSource }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="ws-body">
+            <span class="ws-eyebrow">{{ sample.label }}</span>
+            <h3 class="ws-title">{{ sample.title }}</h3>
+            <p class="ws-desc">{{ sample.description }}</p>
+            <div class="ws-stack">
+              @for (t of sample.stack; track t) {
+                <span class="tech-badge">{{ t }}</span>
+              }
+            </div>
+            <a [routerLink]="sample.route" class="btn-live ws-cta">
+              Open dashboard
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      }
     </div>
 
   </div>

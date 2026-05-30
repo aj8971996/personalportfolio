@@ -22,6 +22,31 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private typeInterval?: ReturnType<typeof setInterval>;
   private observer?: IntersectionObserver;
 
+  readonly workSamples: Array<{
+    label: string; title: string; description: string;
+    stack: string[]; route: string; dataSource: string;
+    preview: string | null;
+  }> = [
+    {
+      label: 'Treasury analytics',
+      title: 'Corporate Cash Flow & Treasury Risk Intelligence',
+      description: 'Answers the question a treasurer asks weekly: is cash where it should be, what\'s driving the variance, and what does the rate environment mean for cost of liquidity?',
+      stack: ['Angular 19', 'ECharts', 'Signals', 'FRED API', 'U.S. Treasury'],
+      route: '/portfolio/cashflow-risk',
+      dataSource: 'FRED / U.S. Treasury · Public data',
+      preview: null,
+    },
+    {
+      label: 'Data analysis',
+      title: 'Corporate Real Estate & Operations Intelligence',
+      description: 'Which assets are underperforming and by how much? Surfaces that from ~270K federal assets used as a corporate portfolio proxy: utilization by state, cost-per-sqft, and predictive flags.',
+      stack: ['Angular 19', 'Chart.js', 'GSA FRPP Data', 'Linear Regression'],
+      route: '/portfolio/treasury-analysis',
+      dataSource: 'GSA FRPP · CC0 Public Domain',
+      preview: null,
+    },
+  ];
+
   readonly capabilities = [
     { group: 'Frontend',           items: ['Angular 19', 'TypeScript', 'RxJS', 'Tailwind CSS'] },
     { group: 'Backend & APIs',     items: ['FastAPI', 'Python', 'REST API Design', 'JWT Auth'] },
