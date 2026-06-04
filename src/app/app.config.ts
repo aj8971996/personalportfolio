@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideEchartsCore } from 'ngx-echarts';
 import * as echarts from 'echarts/core';
-import { LineChart, BarChart } from 'echarts/charts';
+import { LineChart, BarChart, ScatterChart } from 'echarts/charts';
 import {
   GridComponent, TooltipComponent, LegendComponent,
   TitleComponent, MarkLineComponent, MarkPointComponent,
@@ -13,7 +13,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers';
 
 echarts.use([
-  LineChart, BarChart,
+  LineChart, BarChart, ScatterChart,
   GridComponent, TooltipComponent, LegendComponent,
   TitleComponent, MarkLineComponent, MarkPointComponent,
   MarkAreaComponent, DataZoomComponent,

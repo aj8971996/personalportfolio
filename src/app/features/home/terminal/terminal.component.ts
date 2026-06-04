@@ -66,6 +66,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.pushLine('opening real estate intelligence dashboard...', 'system');
       this.router.navigate(['/portfolio/treasury-analysis']);
     },
+    'rate-risk': () => {
+      this.pushLine('opening treasury rate-risk & normality dashboard...', 'system');
+      this.router.navigate(['/portfolio/rate-risk']);
+    },
     prd: () => {
       this.pushLine('opening PRD generator in new tab...', 'system');
       window.open('/assets/tools/prd-generator.html', '_blank');
@@ -216,6 +220,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         '  pkmn-team    open the VGC decision tree team builder',
         '  cashflow     open the cash flow and treasury risk dashboard',
         '  real-estate  open the federal real estate intelligence dashboard',
+        '  rate-risk    open the treasury rate-risk & normality dashboard',
         '  prd          open the PRD generator (new tab)',
         '  art          open Threshold Current generative art (new tab)',
         '  clear        clear this output',

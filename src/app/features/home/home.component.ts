@@ -45,6 +45,15 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
       dataSource: 'GSA FRPP · CC0 Public Domain',
       preview: null,
     },
+    {
+      label: 'Statistical analysis',
+      title: 'Treasury Rate-Risk & the Normality Assumption',
+      description: 'Treasury desks size interest-rate risk by assuming daily yield changes are normally distributed. Under that model, a 6σ day is expected once every 2 million years. U.S. Treasury history contains 22 of them. This dashboard shows the gap.',
+      stack: ['Angular 19', 'ECharts', 'Signals', 'FRED H.15', 'VaR / Distribution Fitting'],
+      route: '/portfolio/rate-risk',
+      dataSource: 'FRED H.15 · U.S. Treasury · Public data',
+      preview: null,
+    },
   ];
 
   readonly capabilities = [

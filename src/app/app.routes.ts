@@ -47,6 +47,14 @@ export const routes: Routes = [
     title: 'Corporate Cash Flow & Treasury Risk — Alex Barkus',
   },
   {
+    path: 'portfolio/rate-risk',
+    loadComponent: () =>
+      import('./features/rate-risk-dashboard/rate-risk-dashboard.component').then(
+        m => m.RateRiskDashboardComponent,
+      ),
+    title: 'Treasury Rate-Risk & the Normality Assumption — Alex Barkus',
+  },
+  {
     path: '**',
     redirectTo: ''
   }

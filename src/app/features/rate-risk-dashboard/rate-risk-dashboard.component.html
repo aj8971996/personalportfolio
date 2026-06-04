@@ -1,0 +1,148 @@
+<div class="dash-page">
+
+  <!-- ── Header ────────────────────────────────────────────────────── -->
+  <header class="dash-header">
+    <div class="dash-header-inner">
+      <a routerLink="/" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        alexbarkus.dev
+      </a>
+      <div class="dash-title-block">
+        <span class="dash-label">Portfolio Work Sample</span>
+        <h1 class="dash-title">Treasury Rate-Risk &amp; the Normality Assumption</h1>
+        <p class="dash-subtitle">
+          Distribution fitting · Value-at-Risk · Tail-risk detection · Model criticism
+        </p>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <!-- Maturity -->
+        <div class="control-group">
+          <label class="ctrl-label">Maturity</label>
+          <div class="btn-group">
+            @for (m of maturities; track m) {
+              <button class="ctrl-btn"
+                [class.active]="controls.maturity() === m"
+                (click)="setMaturity(m)">{{ m }}</button>
+            }
+          </div>
+        </div>
+
+        <!-- Metric -->
+        <div class="control-group">
+          <label class="ctrl-label">Change metric</label>
+          <div class="btn-group">
+            <button class="ctrl-btn" [class.active]="controls.metric() === 'bps'" (click)="setMetric('bps')">Basis pts</button>
+            <button class="ctrl-btn" [class.active]="controls.metric() === 'log'" (click)="setMetric('log')">Log return</button>
+          </div>
+        </div>
+
+        <!-- Window (timeline only) -->
+        <div class="control-group">
+          <label class="ctrl-label">Timeline window</label>
+          <div class="btn-group">
+            @for (w of windows; track w.id) {
+              <button class="ctrl-btn"
+                [class.active]="controls.window() === w.id"
+                (click)="setWindow(w.id)">{{ w.label }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="dash-meta-row">
+          <a class="data-source-tag" href="https://fred.stlouisfed.org/" target="_blank" rel="noopener noreferrer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+            FRED H.15 · U.S. Treasury · Public Data ↗
+          </a>
+          <button class="methodology-btn" (click)="showMethodology = !showMethodology">
+            {{ showMethodology ? 'Hide' : 'Methodology' }}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" [class.rotate-180]="showMethodology" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Methodology drawer ─────────────────────────────────────────── -->
+  @if (showMethodology) {
+    <div class="methodology-drawer">
+      <div class="methodology-inner">
+        <h3>Data Sources</h3>
+        <p>All yield data is sourced from FRED H.15 (Selected Interest Rates, daily, Treasury constant maturity, investment basis, not seasonally adjusted).</p>
+        <ul>
+          <li>Board of Governors of the Federal Reserve System (US), Market Yield on U.S. Treasury Securities at 3-Month Constant Maturity [DGS3MO], retrieved from FRED. Effective range: 1982-01-04 – 2024-12-31.</li>
+          <li>Same series, 2-Year [DGS2]. Range: 1976-06-01 – 2024-12-31.</li>
+          <li>Same series, 5-Year [DGS5]. Range: 1962-01-02 – 2024-12-31.</li>
+          <li>Same series, 10-Year [DGS10]. Range: 1962-01-02 – 2024-12-31.</li>
+          <li>Same series, 30-Year [DGS30]. Range: 1977-02-15 – 2024-12-31 (structural gap 2002-02-01 to 2006-02-08 when Treasury suspended 30Y issuance; no interpolation applied).</li>
+        </ul>
+
+        <h3>Definitions</h3>
+        <dl>
+          <dt>σ (sigma)</dt>
+          <dd>Sample standard deviation of daily yield changes, computed over the full available history (ddof=1).</dd>
+          <dt>Excess kurtosis</dt>
+          <dd>The 4th standardized moment minus 3. A true normal distribution has excess kurtosis = 0. Positive values indicate fatter tails than the normal — more extreme events than the bell curve predicts.</dd>
+          <dt>Value-at-Risk (VaR)</dt>
+          <dd>Under the normal assumption, 1-day VaR at confidence level CL is μ − z·σ, where z is the standard normal quantile for that level (z = 1.645 at 95%, 2.326 at 99%, 3.090 at 99.9%). This is the most common business use of the normal distribution in treasury and risk management.</dd>
+          <dt>Q-Q plot</dt>
+          <dd>Plots observed data quantiles against expected normal quantiles. If the data is normal, points fall on the 45° line. Points pulling away in the tails signal fat tails.</dd>
+          <dt>Sigma band analysis</dt>
+          <dd>For each integer k (1–8), the normal model predicts P(|Z| > k) × n observations. Actual counts far exceeding this prediction is the "impossible becomes possible" scenario.</dd>
+        </dl>
+
+        <h3>Methodology Caveats</h3>
+        <p>
+          The normal distribution assumption understates tail risk in financial returns — this is a documented empirical finding, not a modelling choice. Real daily yield changes exhibit excess kurtosis (4–8 in historical Treasury data), which means a VaR sized on the normal model will be breached more often than the model predicts. This dashboard surfaces that gap explicitly.
+        </p>
+        <p>
+          In production, this analysis connects to your TMS or risk system. The analytical pattern — distribution fitting, VaR sizing, tail-breach detection — is identical. Only the data source changes.
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- ── Row 1: Impossible Counter + VaR KPIs ──────────────────────── -->
+  <div class="dash-content">
+    <div class="row-top">
+      <div class="col-2-3">
+        <app-impossible-counter-panel />
+      </div>
+      <div class="col-1-3">
+        <app-var-kpi-panel />
+      </div>
+    </div>
+
+    <!-- ── Row 2: Distribution Fit + Q-Q ─────────────────────────────── -->
+    <div class="row-halves">
+      <app-distribution-fit-panel />
+      <app-qq-plot-panel />
+    </div>
+
+    <!-- ── Row 3: Sigma Timeline ──────────────────────────────────────── -->
+    <div class="row-full">
+      <app-sigma-timeline-panel />
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="dash-footer">
+    <p>
+      Built with public Federal Reserve (FRED) H.15 data as a proxy for internal TMS risk feeds.
+      The analytical pattern — distribution fitting, VaR, tail-breach detection — is identical in production; only the data source changes.
+      <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener noreferrer">FRED source →</a>
+    </p>
+  </div>
+
+</div>
