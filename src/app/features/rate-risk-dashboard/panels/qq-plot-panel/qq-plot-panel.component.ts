@@ -10,30 +10,65 @@ import { maturityColor } from '../../utils/transforms';
   standalone: true,
   imports: [NgxEchartsDirective],
   template: `
-    <div class="panel-card">
-      <div class="panel-header">
-        <h2 class="panel-title">Q-Q Plot</h2>
-        <p class="panel-sub">Observed quantiles vs. theoretical normal — points on the 45° line = normal; peeling away = fat tails</p>
+    <div class="cf-panel">
+      <div class="cf-panel-header">
+        <div>
+          <h2 class="cf-panel-title">Are the tails fatter than the model assumes?</h2>
+          <p class="cf-panel-caption">
+            Each dot is one trading day, sorted by move size and compared against what a normal
+            distribution would predict. Points hugging the dashed line = normal behavior.
+            Dots bending away in the corners = more extreme moves than the model allows.
+            That bend at both ends is the fat-tail problem.
+          </p>
+        </div>
       </div>
 
       @if (!svc.detailLoaded()) {
-        <div class="skeleton" style="height:380px"></div>
+        <div class="cf-skeleton" style="height:380px"></div>
       } @else {
         <div echarts [options]="chartOptions()" style="height:380px"></div>
-        <p class="panel-verdict">{{ verdict() }}</p>
+        <p class="cf-panel-note">{{ verdict() }}</p>
       }
     </div>
   `,
   styles: [`
-    .panel-card { background:#fff; border-radius:0.75rem; box-shadow:0 1px 2px rgba(0,0,0,.05);
-      ring-width:1px; ring-color:#f3f4f6; padding:1.5rem; }
-    .panel-header { margin-bottom:1rem; }
-    .panel-title { font-size:1rem; font-weight:600; color:#111827; }
-    .panel-sub { font-size:0.75rem; color:#6b7280; margin-top:0.25rem; }
-    .skeleton { background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%);
-      background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:0.5rem; }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    .panel-verdict { font-size:0.72rem; color:#6b7280; margin-top:0.5rem; font-style:italic; }
+    .cf-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .cf-panel-header { margin-bottom: 1rem; }
+    .cf-panel-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+    .cf-panel-caption {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      max-width: 580px;
+    }
+    .cf-skeleton {
+      background: var(--bg-raised);
+      border-radius: 8px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .cf-panel-note {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+      font-style: italic;
+    }
   `],
 })
 export class QqPlotPanelComponent {
@@ -44,9 +79,9 @@ export class QqPlotPanelComponent {
     const s = this.svc.currentStats();
     if (!s) return '';
     const ek = s.excess_kurtosis;
-    if (ek > 5) return `Tails deviate sharply from normal beyond ≈±2.5σ. Excess kurtosis ${ek.toFixed(1)} vs. 0 for a true normal — the tails carry ${(ek / 1 + 1).toFixed(0)}× more probability mass than the bell curve allows.`;
-    if (ek > 2) return `Moderate fat tails. Excess kurtosis ${ek.toFixed(1)} — points peel away from the reference line in both tails.`;
-    return `Near-normal tails. Excess kurtosis ${ek.toFixed(1)}.`;
+    if (ek > 5) return `Tail weight (excess kurtosis) = ${ek.toFixed(1)}. A normal distribution scores 0. This series scores ${ek.toFixed(1)} — the corners of this chart pull sharply away from the dashed line, showing that extreme moves happened far more often than the model expects.`;
+    if (ek > 2) return `Tail weight (excess kurtosis) = ${ek.toFixed(1)} — moderately heavier tails than a normal distribution. Points peel away at the corners.`;
+    return `Tail weight (excess kurtosis) = ${ek.toFixed(1)} — close to normal. The dots track the dashed line well.`;
   });
 
   readonly chartOptions = computed<EChartsOption>(() => {
@@ -63,35 +98,38 @@ export class QqPlotPanelComponent {
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'item',
+        backgroundColor: '#18181F',
+        borderColor: 'rgba(255,255,255,0.08)',
+        textStyle: { color: '#f1f5f9', fontSize: 12 },
         formatter: (p: unknown) => {
           const pt = p as { value: [number, number] };
-          return `Theoretical: ${pt.value[0].toFixed(3)}<br/>Sample: ${pt.value[1].toFixed(3)}`;
+          return `Expected: ${pt.value[0].toFixed(2)}σ<br/>Actual: ${pt.value[1].toFixed(2)}σ`;
         },
       },
-      legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 } },
+      legend: { bottom: 0, textStyle: { color: '#94a3b8', fontSize: 11 } },
       grid: { top: 20, bottom: 50, left: 65, right: 20 },
       xAxis: {
         type: 'value',
-        name: 'Theoretical Normal Quantile',
+        name: 'Expected (if normal)',
         nameLocation: 'middle',
         nameGap: 32,
         min: amin,
         max: amax,
-        axisLabel: { color: '#6b7280', fontSize: 11 },
-        axisLine: { lineStyle: { color: '#e5e7eb' } },
-        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#94a3b8', fontSize: 11, formatter: (v: number) => `${v.toFixed(0)}σ` },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.04)' } },
       },
       yAxis: {
         type: 'value',
-        name: 'Sample Quantile (standardized)',
+        name: 'Actual',
         min: amin,
         max: amax,
-        axisLabel: { color: '#6b7280', fontSize: 11 },
-        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#94a3b8', fontSize: 11, formatter: (v: number) => `${v.toFixed(0)}σ` },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.04)' } },
       },
       series: [
         {
-          name: 'Observed',
+          name: 'Actual days',
           type: 'scatter',
           data: qq.map(p => [p.theoretical_quantile, p.sample_quantile]),
           symbolSize: 3,
@@ -99,7 +137,7 @@ export class QqPlotPanelComponent {
           large: true,
         },
         {
-          name: '45° Normal Line',
+          name: 'Perfect normal (reference)',
           type: 'line',
           data: [[amin, amin], [amax, amax]],
           lineStyle: { color: '#ef4444', width: 1.5, type: 'dashed' },

@@ -78,36 +78,44 @@
   @if (showMethodology) {
     <div class="methodology-drawer">
       <div class="methodology-inner">
-        <h3>Data Sources</h3>
-        <p>All yield data is sourced from FRED H.15 (Selected Interest Rates, daily, Treasury constant maturity, investment basis, not seasonally adjusted).</p>
+        <h3>Data sources</h3>
+        <p>All yield data comes from the Federal Reserve's FRED database (H.15 Selected Interest Rates — daily, Treasury constant maturity, not seasonally adjusted). It's public and free.</p>
         <ul>
-          <li>Board of Governors of the Federal Reserve System (US), Market Yield on U.S. Treasury Securities at 3-Month Constant Maturity [DGS3MO], retrieved from FRED. Effective range: 1982-01-04 – 2024-12-31.</li>
-          <li>Same series, 2-Year [DGS2]. Range: 1976-06-01 – 2024-12-31.</li>
-          <li>Same series, 5-Year [DGS5]. Range: 1962-01-02 – 2024-12-31.</li>
-          <li>Same series, 10-Year [DGS10]. Range: 1962-01-02 – 2024-12-31.</li>
-          <li>Same series, 30-Year [DGS30]. Range: 1977-02-15 – 2024-12-31 (structural gap 2002-02-01 to 2006-02-08 when Treasury suspended 30Y issuance; no interpolation applied).</li>
+          <li>3-Month [DGS3MO] — 1982-01-04 to 2024-12-31 (11,216 trading days)</li>
+          <li>2-Year [DGS2] — 1976-06-01 to 2024-12-31 (12,675 trading days)</li>
+          <li>5-Year [DGS5] — 1962-01-02 to 2024-12-31 (16,435 trading days)</li>
+          <li>10-Year [DGS10] — 1962-01-02 to 2024-12-31 (16,435 trading days)</li>
+          <li>30-Year [DGS30] — 1977-02-15 to 2024-12-31, with a gap from 2002-02-01 to 2006-02-08 when Treasury stopped issuing 30Y bonds (11,440 trading days total; gap treated as missing, not filled)</li>
         </ul>
 
-        <h3>Definitions</h3>
+        <h3>Why different maturities show different "impossible" counts</h3>
+        <p>
+          The counter picks the highest sigma level (e.g. 8×) where real events exist, then compares that count to what the normal model predicts. Two things explain why 10Y and 30Y differ:
+        </p>
+        <ul>
+          <li><strong>More data = more chances.</strong> 10Y and 5Y go back to 1962 (16,435 days). 30Y starts in 1977 and has a 4-year gap, leaving only 11,440 days. Rare events are rare — more data means more exposure to catching them.</li>
+          <li><strong>Different typical swings.</strong> 30Y bonds are more volatile (σ ≈ 15 bps vs 13 bps for 10Y), so its "8×" threshold is a larger absolute move. A higher bar means fewer events qualify.</li>
+        </ul>
+        <p>Both are correct. The observation count (shown in the chips below the headline) is the key context.</p>
+
+        <h3>Key terms, plain English</h3>
         <dl>
-          <dt>σ (sigma)</dt>
-          <dd>Sample standard deviation of daily yield changes, computed over the full available history (ddof=1).</dd>
-          <dt>Excess kurtosis</dt>
-          <dd>The 4th standardized moment minus 3. A true normal distribution has excess kurtosis = 0. Positive values indicate fatter tails than the normal — more extreme events than the bell curve predicts.</dd>
+          <dt>σ (sigma / standard deviation)</dt>
+          <dd>The typical size of a daily rate move, computed from the full history. A "3σ day" means the move was 3 times that typical size.</dd>
+          <dt>Tail weight (excess kurtosis)</dt>
+          <dd>A score for how heavy the extreme ends of the distribution are. A true normal distribution scores 0. Treasury data typically scores 4–8, meaning extreme moves happen far more often than the model expects.</dd>
           <dt>Value-at-Risk (VaR)</dt>
-          <dd>Under the normal assumption, 1-day VaR at confidence level CL is μ − z·σ, where z is the standard normal quantile for that level (z = 1.645 at 95%, 2.326 at 99%, 3.090 at 99.9%). This is the most common business use of the normal distribution in treasury and risk management.</dd>
-          <dt>Q-Q plot</dt>
-          <dd>Plots observed data quantiles against expected normal quantiles. If the data is normal, points fall on the 45° line. Points pulling away in the tails signal fat tails.</dd>
-          <dt>Sigma band analysis</dt>
-          <dd>For each integer k (1–8), the normal model predicts P(|Z| > k) × n observations. Actual counts far exceeding this prediction is the "impossible becomes possible" scenario.</dd>
+          <dd>The loss level a normal model says you shouldn't exceed more than X% of trading days. A 99% 1-day VaR means the model expects a breach about 2–3 times per year. With fat tails, the real breach rate is higher.</dd>
+          <dt>The tail shape chart</dt>
+          <dd>Sorts all daily moves from smallest to largest, then plots each one against where a normal distribution would expect it to fall. Points hugging the diagonal = normal. Points bending away at the corners = heavier tails than the model assumes.</dd>
         </dl>
 
-        <h3>Methodology Caveats</h3>
+        <h3>Honest caveats</h3>
         <p>
-          The normal distribution assumption understates tail risk in financial returns — this is a documented empirical finding, not a modelling choice. Real daily yield changes exhibit excess kurtosis (4–8 in historical Treasury data), which means a VaR sized on the normal model will be breached more often than the model predicts. This dashboard surfaces that gap explicitly.
+          Fat tails in financial returns are a known, documented fact — not a bug in this analysis. Real daily yield changes have consistently scored excess kurtosis between 4 and 8 across all Treasury maturities. That means a VaR limit sized on the normal model will be breached more often than it should. This dashboard measures that gap; it doesn't claim to predict when the next extreme day will occur.
         </p>
         <p>
-          In production, this analysis connects to your TMS or risk system. The analytical pattern — distribution fitting, VaR sizing, tail-breach detection — is identical. Only the data source changes.
+          In a production environment, this same analysis connects to a TMS or risk system instead of FRED. The method — fit a distribution, compute VaR, measure actual vs. expected tail breaches — is identical.
         </p>
       </div>
     </div>
