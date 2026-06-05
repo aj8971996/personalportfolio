@@ -2,75 +2,75 @@
   "maturity": "10Y",
   "series_id": "DGS10",
   "metric": "bps",
-  "n": 16435,
+  "n": 15377,
   "date_start": "1962-01-03",
-  "date_end": "2024-12-31",
-  "mu": 0.0008518405841192619,
-  "sigma": 12.970576385621273,
-  "skewness": 0.21281505647459226,
-  "excess_kurtosis": 11.7439974212102,
-  "min": -171.00000000000003,
-  "min_date": "2023-03-27",
-  "max": 178.0,
-  "max_date": "2020-04-13",
+  "date_end": "2026-06-03",
+  "mu": -0.01079534369512909,
+  "sigma": 6.3796399121949445,
+  "skewness": -0.33269839440846266,
+  "excess_kurtosis": 8.931350167055912,
+  "min": -75.0,
+  "min_date": "1987-10-20",
+  "max": 50.0,
+  "max_date": "1981-07-20",
   "var_thresholds": {
     "95": {
       "z": 1.6449,
-      "var_loss": -21.334449256124312,
-      "var_gain": 21.33615293729255
+      "var_loss": -10.504665035264594,
+      "var_gain": 10.483074347874336
     },
     "99": {
       "z": 2.3263,
-      "var_loss": -30.172600005286647,
-      "var_gain": 30.174303686454884
+      "var_loss": -14.851751671434227,
+      "var_gain": 14.83016098404397
     },
     "999": {
       "z": 3.0902,
-      "var_loss": -40.08082330626274,
-      "var_gain": 40.082526987430974
+      "var_loss": -19.725158600359947,
+      "var_gain": 19.70356791296969
     }
   },
   "sigma_bands": [
     {
       "k": 1,
-      "expected_count_normal": 5214.9982,
-      "actual_count": 3562,
+      "expected_count_normal": 4879.2837,
+      "actual_count": 3142,
       "expected_years_between": 0.0
     },
     {
       "k": 2,
-      "expected_count_normal": 747.7968,
-      "actual_count": 857,
+      "expected_count_normal": 699.6576,
+      "actual_count": 816,
       "expected_years_between": 0.1
     },
     {
       "k": 3,
-      "expected_count_normal": 44.3711,
-      "actual_count": 280,
+      "expected_count_normal": 41.5148,
+      "actual_count": 239,
       "expected_years_between": 1.5
     },
     {
       "k": 4,
-      "expected_count_normal": 1.041,
-      "actual_count": 107,
+      "expected_count_normal": 0.974,
+      "actual_count": 96,
       "expected_years_between": 62.6
     },
     {
       "k": 5,
-      "expected_count_normal": 0.0094,
-      "actual_count": 50,
+      "expected_count_normal": 0.0088,
+      "actual_count": 46,
       "expected_years_between": 6921.7
     },
     {
       "k": 6,
       "expected_count_normal": 0.0,
-      "actual_count": 22,
+      "actual_count": 18,
       "expected_years_between": 2011100.5
     },
     {
       "k": 7,
       "expected_count_normal": 0.0,
-      "actual_count": 11,
+      "actual_count": 9,
       "expected_years_between": 1550262586.1
     },
     {
