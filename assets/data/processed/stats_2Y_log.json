@@ -1,0 +1,83 @@
+{
+  "maturity": "2Y",
+  "series_id": "DGS2",
+  "metric": "log",
+  "n": 12675,
+  "date_start": "1976-06-02",
+  "date_end": "2024-12-31",
+  "mu": -2.965245444153513e-05,
+  "sigma": 0.25532729837951146,
+  "skewness": -0.13985716595601494,
+  "excess_kurtosis": 88.52652312057829,
+  "min": -4.31748811353631,
+  "min_date": "2008-06-03",
+  "max": 4.356708826689592,
+  "max_date": "2009-11-13",
+  "var_thresholds": {
+    "95": {
+      "z": 1.6449,
+      "var_loss": -0.42001752555889993,
+      "var_gain": 0.41995822065001687
+    },
+    "99": {
+      "z": 2.3263,
+      "var_loss": -0.593997546674699,
+      "var_gain": 0.5939382417658159
+    },
+    "999": {
+      "z": 3.0902,
+      "var_loss": -0.7890420699068078,
+      "var_gain": 0.7889827649979247
+    }
+  },
+  "sigma_bands": [
+    {
+      "k": 1,
+      "expected_count_normal": 4021.9107,
+      "actual_count": 607,
+      "expected_years_between": 0.0
+    },
+    {
+      "k": 2,
+      "expected_count_normal": 576.7158,
+      "actual_count": 323,
+      "expected_years_between": 0.1
+    },
+    {
+      "k": 3,
+      "expected_count_normal": 34.2199,
+      "actual_count": 217,
+      "expected_years_between": 1.5
+    },
+    {
+      "k": 4,
+      "expected_count_normal": 0.8029,
+      "actual_count": 165,
+      "expected_years_between": 62.6
+    },
+    {
+      "k": 5,
+      "expected_count_normal": 0.0073,
+      "actual_count": 123,
+      "expected_years_between": 6921.7
+    },
+    {
+      "k": 6,
+      "expected_count_normal": 0.0,
+      "actual_count": 92,
+      "expected_years_between": 2011100.5
+    },
+    {
+      "k": 7,
+      "expected_count_normal": 0.0,
+      "actual_count": 80,
+      "expected_years_between": 1550262586.1
+    },
+    {
+      "k": 8,
+      "expected_count_normal": 0.0,
+      "actual_count": 58,
+      "expected_years_between": 2978571182123.3
+    }
+  ]
+}
